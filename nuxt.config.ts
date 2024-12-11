@@ -9,6 +9,5 @@ export default defineNuxtConfig({
       autoprefixer: {},
     },
   },
-  plugins: ['~/plugins/pinia.js'],
   modules: ['@nuxtjs/tailwindcss'],
 })
