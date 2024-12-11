@@ -1,4 +1,4 @@
-export const API_CONFIG = {
+export const API_CONFIG: Record<string, string> = {
     weather: "https://api.openweathermap.org/data/2.5/",
     // news: "https://newsapi.org/v2/",
     // picture: "https://api.unsplash.com/",

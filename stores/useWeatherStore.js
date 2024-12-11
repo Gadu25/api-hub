@@ -70,7 +70,6 @@ export const useWeatherStore = defineStore('weather', {
   },
   persist: {
     key: 'saved-locations',
-    storage: process.client ? window.localStorage : null,
     paths: ['savedLocations']
   }
 });
