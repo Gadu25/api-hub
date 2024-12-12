@@ -3,7 +3,7 @@
 
 <template>
 
-    <div class='relative flex md:gap-2 lg:gap-5 max-h-screen'>
+    <div >
         <CommonDrawerSidebar />
         <main class="w-full  ">
             <slot />
@@ -11,8 +11,4 @@
     </div>
 </template>
 
-<style scoped>
-.bg {
-    background-color: #f1f2f6;
-}
-</style>
+<style scoped></style>
