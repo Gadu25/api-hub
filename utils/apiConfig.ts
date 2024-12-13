@@ -4,7 +4,7 @@ export const API_CONFIG: Record<string, string> = {
     picture: "https://api.unsplash.com/",
     countries: "https://restcountries.com/v3.1/",
     users: "https://randomuser.me/api/",
-    // joke: "https://v2.jokeapi.dev/joke/",
+    joke: "https://v2.jokeapi.dev/joke/",
     // exchangeRate: "https://v6.exchangerate-api.com/v4/latest/",
     // nasa: "https://api.nasa.gov/",
     // library: "https://openlibrary.org/api/",
