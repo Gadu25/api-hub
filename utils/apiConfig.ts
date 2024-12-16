@@ -7,5 +7,5 @@ export const API_CONFIG: Record<string, string> = {
     joke: "https://v2.jokeapi.dev/joke/",
     exchangeRate: "https://v6.exchangerate-api.com/v6/",
     // nasa: "https://api.nasa.gov/",
-    // library: "https://openlibrary.org/api/",
+    library: "https://openlibrary.org/",
 };
