@@ -5,7 +5,7 @@ export const API_CONFIG: Record<string, string> = {
     countries: "https://restcountries.com/v3.1/",
     users: "https://randomuser.me/api/",
     joke: "https://v2.jokeapi.dev/joke/",
-    // exchangeRate: "https://v6.exchangerate-api.com/v4/latest/",
+    exchangeRate: "https://v6.exchangerate-api.com/v6/",
     // nasa: "https://api.nasa.gov/",
     // library: "https://openlibrary.org/api/",
 };
