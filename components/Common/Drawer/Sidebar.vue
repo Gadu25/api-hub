@@ -27,11 +27,9 @@
       </button>
       <div class="flex flex-col gap-2">
         <CommonDrawerSidebarMenu v-for="link in menuItems" :key="link.label" :text="link.label" :icon="link.icon"
-          :to="link.to" :is-active="sidebarRoute.path === link.to || false" :active-color="activeColor" :isDrawerOpen="isDrawerOpen" menuItem=""/>
+          :to="link.to" :is-active="sidebarRoute.path === link.to || false" :active-menu="activeColor"  :isDrawerOpen="isDrawerOpen" />
       </div>
     </div>
-
-     
     </div>
 
     <!-- Main Content Area -->
