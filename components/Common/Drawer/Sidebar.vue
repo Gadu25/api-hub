@@ -68,7 +68,7 @@ watch(
 );
 
 const menuItems = [
-  { label: 'Weather', icon: 'mdiWeatherPouring', to: '/weather' },
+  { label: 'Weather', icon: 'mdiWeatherPouring', to: '/weather/weather' },
   { label: 'News', icon: 'mdiNewspaperVariantOutline', to: '/news' },
   { label: 'Pictures', icon: 'mdiPictureInPictureTopRightOutline', to: '/pictures' },
   { label: 'Countries', icon: 'mdiFlagOutline', to: '/countries/countries' },

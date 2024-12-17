@@ -26,7 +26,7 @@
 
     <!-- Main Content -->
     <div class="flex flex-wrap gap-4 mt-4">
-      <nuxt-link v-for="(item, index) in locations" :key="index" :to="`/weather=${item.id}`">
+      <nuxt-link v-for="(item, index) in locations" :key="index" :to="`/weather/${item.id}`">
 
         <div
           class="bg-gray-100 w-80 h-48 p-4 flex flex-col justify-start rounded-lg hover:cursor-pointer"
