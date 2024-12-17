@@ -21,6 +21,9 @@ export const useLibraryStore = defineStore('library', {
         },
         getBooks(){
             return this.books;
+        },
+        getBookImage(id,directory){
+            return `https://covers.openlibrary.org/b/${directory}/${id}-L.jpg`
         }
     }
 })
