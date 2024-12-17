@@ -23,21 +23,21 @@ defineProps({
 <style scoped>
 .active-color {
   color: #e67e22;
-  /* Orange for active state */
+
 }
 
 .text-white {
   color: #ffffff;
-  /* Default white color */
+
 }
 
 .text-orange {
   color: #e67e22;
-  /* Matches active-color */
+
 }
 
 .size-8 {
   font-size: 2rem;
-  /* Adjust icon size if needed */
+
 }
 </style>

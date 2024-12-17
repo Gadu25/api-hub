@@ -42,15 +42,20 @@ export const getJokes = async (
     }
 
     let typeValue = ''
+    let activeCount = 0;
     for (const item in filters.type){
       if(filters.type[item]){
         typeValue = item;
+        activeCount += 1;
       }
     }
-    let extension = hasFlags ? '&' : '?'
-
-    filterContent += filters.type.single && filters.type.twopart || !filters.type.single && !filters.type.twopart
-    ? '' : `${extension}type=${typeValue}`
+    let extension = filterContent.includes('blacklistFlags=') ? '&' : '?'
+    if(activeCount == 1){
+      filterContent += filters.type.single && filters.type.twopart || !filters.type.single && !filters.type.twopart
+      ? '' : `${extension}type=${typeValue}`
+    }
+    
+    extension = filterContent.includes('blacklistFlags=') || filterContent.includes('type=') ? '&' : '?'
 
     filterContent += filters.amount > 1 ? `${extension}amount=${filters.amount}`:''
 
