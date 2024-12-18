@@ -74,7 +74,7 @@ const menuItems = [
   { label: 'Countries', icon: 'mdiFlagOutline', to: '/countries/countries' },
   { label: 'Users', icon: 'mdiAccountMultipleOutline', to: '/users/users' },
   { label: 'Jokes', icon: 'mdiAlphaJ', to: '/joke/joke' },
-  { label: 'Exchange', icon: 'mdiSwapHorizontal', to: '/exchange' },
+  { label: 'Exchange', icon: 'mdiSwapHorizontal', to: '/exchange/exchange' },
   { label: 'NASA', icon: 'mdiSpaceStation', to: '/nasa' },
   { label: 'Library', icon: 'mdiLibraryOutline', to: '/library' },
 ];
