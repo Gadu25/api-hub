@@ -72,10 +72,10 @@ const menuItems = [
   { label: 'News', icon: 'mdiNewspaperVariantOutline', to: '/news' },
   { label: 'Pictures', icon: 'mdiPictureInPictureTopRightOutline', to: '/pictures' },
   { label: 'Countries', icon: 'mdiFlagOutline', to: '/countries/countries' },
-  { label: 'Users', icon: 'mdiAccountMultipleOutline', to: '/users' },
-  { label: 'Jokes', icon: 'mdiAlphaJ', to: '/jokes' },
-  { label: 'Exchange', icon: 'mdiSwapHorizontal', to: '/exchange' },
-  { label: 'NASA', icon: 'mdiSpaceStation', to: '/nasa' },
+  { label: 'Users', icon: 'mdiAccountMultipleOutline', to: '/users/users' },
+  { label: 'Jokes', icon: 'mdiAlphaJ', to: '/joke/joke' },
+  { label: 'Exchange', icon: 'mdiSwapHorizontal', to: '/exchange/exchange' },
+  { label: 'NASA', icon: 'mdiSpaceStation', to: '/nasa/nasa' },
   { label: 'Library', icon: 'mdiLibraryOutline', to: '/library' },
 ];
 
