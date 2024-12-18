@@ -25,7 +25,7 @@
     <template v-for="article in isSearch ? searched.articles : headlineData.articles">
       <div v-if="article.content != '[Removed]'" class="flex-1 lg:min-w-[calc(50%-1rem)] xl:min-w-[calc(33.333%-1rem)] p-2">
         <!-- Card -->
-        <div class="card col-span-2 bg-gray-100 shadow-md rounded-lg overflow-hidden flex h-full cursor-pointer p-6 hover:animate-upDown" @click="openUrl(article.url)">
+        <div class="card col-span-2 bg-gray-100 shadow-md rounded-lg overflow-hidden flex h-full cursor-pointer p-6" @click="openUrl(article.url)">
           <!-- Left Column: Full Image -->
             <div class="w-96 h-80 rounded-lg overflow-hidden rounded-lg">
               <img :src="article.urlToImage ? article.urlToImage: newsPlaceholder" alt="News Image"

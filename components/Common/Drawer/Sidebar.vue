@@ -76,7 +76,7 @@ const menuItems = [
   { label: 'Jokes', icon: 'mdiAlphaJ', to: '/joke/joke' },
   { label: 'Exchange', icon: 'mdiSwapHorizontal', to: '/exchange/exchange' },
   { label: 'NASA', icon: 'mdiSpaceStation', to: '/nasa/nasa' },
-  { label: 'Library', icon: 'mdiLibraryOutline', to: '/library' },
+  { label: 'Library', icon: 'mdiLibraryOutline', to: '/library/library' },
 ];
 
 const isDrawerOpen = ref(true);
