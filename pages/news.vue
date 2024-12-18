@@ -1,10 +1,8 @@
-<script setup lang="ts"></script>
-
 <template>
 
   <div>
 
-    <form class="flex items-center max-w-full mx-auto mb-10">
+    <form class="flex items-center max-w-full mx-auto mb-2" @submit.prevent>
       <label for="simple-search" class="sr-only">Search</label>
       <div class="relative w-full">
         <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
@@ -13,72 +11,103 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M21 21l-4.35-4.35m1.35-5.65a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
-
         </div>
         <input type="text" id="simple-search"
-          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-full focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5  dark:bg-gray-100 dark:border-gray-200 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-          placeholder="Look for something..." required />
+          class="bg-gray-50 border border-gray-300 text-sm rounded-full focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5"
+          placeholder="Look for something..." v-model="query" required @keypress.enter="searchNews()" />
       </div>
 
     </form>
 
   </div>
   <!-- Container -->
-  <div class="flex gap-6 justify-start  ">
-    <div class=" gap-4 w-[50%]">
-      <!-- Card -->
-      <div class="col-span-2 bg-gray-100 shadow-md rounded-lg overflow-hidden flex">
-        <!-- Left Column: Full Image -->
-        <div class="w-96 h-80 p-6">
-          <img src="https://via.placeholder.com/300x200" alt="News Image"
-            class="object-cover w-full h-full rounded-lg" />
-        </div>
-        <!-- Right Column: Content -->
-        <div class="w-4/5 p-2 flex flex-col py-6">
-          <h2 class="text-lg font-semibold mb-2">
-            Trouble in paradise in Philadelphia?
-          </h2>
-          <p class="text-sm text-gray-600 mb-2">
-            Jalen Hurts-A.J. Brown relationship: Eagles' Brandon Graham says 'they were friends, but things have
-            changed'
-            - CBS Sports
-          </p>
-          <p class="text-xs text-gray-500 leading-relaxed">
-            For the second consecutive year, there appears to be tension between Jalen Hurts and A.J. Brown that is
-            affecting the Philadelphia Eagles locker room. Forget the fact that the Eagles are 11-2 and won...
-          </p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Container -->
-    <div class=" gap-4 w-[50%]">
-      <!-- Card -->
-      <div class="col-span-2 bg-gray-100 shadow-md rounded-lg overflow-hidden flex">
-        <!-- Left Column: Full Image -->
-        <div class="w-96 h-80 p-6">
-          <img src="https://via.placeholder.com/300x200" alt="News Image"
-            class="object-cover w-full h-full rounded-lg" />
-        </div>
-        <!-- Right Column: Content -->
-        <div class="w-4/5 p-2 flex flex-col py-6">
-          <h2 class="text-lg font-semibold mb-2">
-            Trouble in paradise in Philadelphia?
-          </h2>
-          <p class="text-sm text-gray-600 mb-2">
-            Jalen Hurts-A.J. Brown relationship: Eagles' Brandon Graham says 'they were friends, but things have
-            changed'
-            - CBS Sports
-          </p>
-          <p class="text-xs text-gray-500 leading-relaxed">
-            For the second consecutive year, there appears to be tension between Jalen Hurts and A.J. Brown that is
-            affecting the Philadelphia Eagles locker room. Forget the fact that the Eagles are 11-2 and won...
-          </p>
+  <div v-if="!loading" class="flex flex-wrap gap-4">
+    <template v-for="article in isSearch ? searched.articles : headlineData.articles">
+      <div v-if="article.content != '[Removed]'" class="flex-1 lg:min-w-[calc(50%-1rem)] xl:min-w-[calc(33.333%-1rem)] p-2">
+        <!-- Card -->
+        <div class="card col-span-2 bg-gray-100 shadow-md rounded-lg overflow-hidden flex h-full cursor-pointer p-6 hover:animate-upDown" @click="openUrl(article.url)">
+          <!-- Left Column: Full Image -->
+            <div class="w-96 h-80 rounded-lg overflow-hidden rounded-lg">
+              <img :src="article.urlToImage ? article.urlToImage: newsPlaceholder" alt="News Image"
+                class="object-cover h-full" />
+            </div>
+          <!-- Right Column: Content -->
+          <div class="w-4/5 ms-4 flex flex-col">
+            <h2 class="text-lg font-semibold mb-2">
+              {{ article.title }}
+            </h2>
+            <p class="text-sm text-gray-600 mb-2">
+              {{ article.author }}
+            </p>
+            <p class="text-xs text-gray-500 leading-relaxed">
+              {{ article.description }}
+            </p>
+          </div>
         </div>
       </div>
-    </div>
+    </template>
+  </div>
+  <div v-else class="p-52 flex justify-center items-center">
+    <p>fetching news...</p>
   </div>
 
 </template>
 
-<style scoped></style>
+<script setup>
+  import { ref } from 'vue';
+  import { storeToRefs } from 'pinia';
+  import { useNewsStore } from '~/stores/useNewsStore';
+  import newsPlaceholder from '~/assets/images/news-placeholder.png'
+
+  const newsStore = useNewsStore();
+  const { headlineData, searched, loading, error } = storeToRefs(newsStore);
+
+  const query = ref('');
+  const isSearch = ref(false);
+
+  const fetchHeadLines = async () => {
+    await newsStore.fetchHeadLines('us');
+  };
+
+  const searchNews = async () => {
+    event.preventDefault();
+    console.log('hit', query.value)
+    isSearch.value = true;
+    if (query.value.trim()) {
+      await newsStore.fetchEverything(query.value);
+    } else {
+      alert('Please enter a query before fetching news.');
+    }
+  };
+
+  const openUrl = (link) => {
+    return window.open(link)
+  }
+  onMounted(fetchHeadLines);
+</script>
+<style scoped>
+.card {
+  img {
+    scale: 1.2;
+    transition: all 0.3s;
+  }
+  &:hover {
+    animation: upDown .2s;
+    img {
+      scale: 1;
+    }
+  }
+}
+
+@keyframes upDown {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+</style>
