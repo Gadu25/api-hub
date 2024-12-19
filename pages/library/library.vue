@@ -19,37 +19,6 @@ const searchBook = async () => {
 const hasImage = (book) => {
   return book.isbn || book.oclc || book.lccn || book.olid
 }
-
-const openUrl = (link) => {
-  return window.open(link)
-}
-
-
-
-// const books = [
-//   {
-//     book_id: 1,
-//     title: "Article 1",
-//     description: "This is a sample description for Article 1. Add as much detail as needed.",
-//     details: "Further article information can go here. The layout ensures the content and image are balanced and responsive.",
-//     imageSrc: "https://via.placeholder.com/300x400",
-//   },
-//   {
-//     book_id: 2,
-//     title: "Article 2",
-//     description: "This is a sample description for Article 2. Add as much detail as needed.",
-//     details: "Further article information can go here. The layout ensures the content and image are balanced and responsive.",
-//     imageSrc: "https://via.placeholder.com/300x400",
-//   },
-//   {
-//     book_id: 3,
-//     title: "Article 3",
-//     description: "This is a sample description for Article 3. Add as much detail as needed.",
-//     details: "Further article information can go here. The layout ensures the content and image are balanced and responsive.",
-//     imageSrc: "https://via.placeholder.com/300x400",
-//   },
-// ];
-
 </script>
 
 <template>
@@ -78,8 +47,8 @@ const openUrl = (link) => {
 
     <!-- Grid Layout -->
     <div v-if="books.docs" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <div v-for="book in books.docs" class="p-2">
-        <!-- <nuxt-link :to="`/library/${book.book_id}`" class="block"> -->
+      <div v-for="(book, index) in books.docs" class="p-2">
+        <nuxt-link :to="`/library/${index}`" class="block">
           <div
             class="card border shadow-md rounded-lg overflow-hidden grid grid-cols-1 md:grid-cols-2 h-full cursor-pointer">
             <!-- Image Column -->
@@ -103,7 +72,7 @@ const openUrl = (link) => {
               </p>
             </div>
           </div>
-        <!-- </nuxt-link> -->
+        </nuxt-link>
       </div>
     </div>
   </div>
