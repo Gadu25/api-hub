@@ -1,107 +1,121 @@
 <script setup lang="ts">
-// Array of card data
-const cards = [
-  {
-    id: 1,
-    name: "United Kingdom",
-    region: "Europe",
-    image:
-      "https://upload.wikimedia.org/wikipedia/en/a/a9/Flag_of_the_United_Kingdom.svg",
-  },
-  {
-    id: 2,
-    name: "Philippines",
-    region: "Asia",
-    image:
-      "https://upload.wikimedia.org/wikipedia/commons/9/99/Flag_of_the_Philippines.svg",
-  },
-  {
-    id: 3,
-    name: "Japan",
-    region: "Asia",
-    image: "https://upload.wikimedia.org/wikipedia/en/9/9e/Flag_of_Japan.svg",
-  },
-  {
-    id: 4,
-    name: "Canada",
-    region: "North America",
-    image:
-      "https://upload.wikimedia.org/wikipedia/commons/c/cf/Flag_of_Canada.svg",
-  },
-  {
-    id: 5,
-    name: "Brazil",
-    region: "South America",
-    image: "https://upload.wikimedia.org/wikipedia/en/0/05/Flag_of_Brazil.svg",
-  },
-  {
-    id: 6,
-    name: "Australia",
-    region: "Oceania",
-    image: "https://upload.wikimedia.org/wikipedia/en/b/b9/Flag_of_Australia.svg",
-  },
-  {
-    id: 7,
-    name: "South Africa",
-    region: "Africa",
-    image:
-      "https://upload.wikimedia.org/wikipedia/commons/a/af/Flag_of_South_Africa.svg",
-  },
-  {
-    id: 8,
-    name: "India",
-    region: "Asia",
-    image: "https://upload.wikimedia.org/wikipedia/en/4/41/Flag_of_India.svg",
-  },
-];
+import { ref, onMounted, computed } from 'vue';
+import { storeToRefs } from 'pinia';
+import { useCountryStore } from '~/stores/useCountryStore';
+import { useRouter } from 'vue-router';
 
-// Reactive state for search query and filtered cards
-import { ref, computed } from "vue";
+const countryStore = useCountryStore();
+const { countriesData, loading, error } = storeToRefs(countryStore);
 
-const searchQuery = ref(""); // For storing the user input
+const query = ref('');
+const isSearch = ref(false);
 
+// No need to create the router manually, use the default Nuxt router
+const router = useRouter();
 
-// Filtered cards based on the search query
-const filteredCards = computed(() => {
-  const query = searchQuery.value.toLowerCase();
-  return cards.filter(
-    (card) =>
-      card.name.toLowerCase().includes(query) ||
-      card.region.toLowerCase().includes(query)
+const searchCountries = async () => {
+  if (query.value.trim()) {
+    await countryStore.fetchCountries();
+    isSearch.value = true;
+    console.log("country", countriesData.value);
+  } else {
+    alert('Please enter a query before fetching picture.');
+  }
+};
+
+const filteredCountries = computed(() => {
+  if (!query.value.trim()) {
+    return countriesData.value;
+  }
+  return countriesData.value.filter((country: { name: { common: string; }; }) =>
+    country.name.common.toLowerCase().includes(query.value.toLowerCase())
   );
 });
 
+// Navigate to country detail page when a country is clicked
+const navigateToCountry = (country: { cca3: string; }) => {
+  router.push(`/countries/${country.cca3}`);
+
+};
+
+onMounted(async () => {
+  await countryStore.fetchCountries();
+  // Initially, navigate to the first country after fetching countries
+
+  console.log("Countries loaded on mount:", countriesData.value);
+});
 </script>
 
 <template>
   <!-- Search Bar -->
-  <div class="w-full mb-8">
-    <div class="relative">
-      <input v-model="searchQuery" type="text" placeholder="Look for a country or region"
-        class="w-full border rounded-full p-3 pl-10 shadow-sm focus:ring-2 focus:ring-gray-400 focus:outline-none" />
-      <!-- Search Icon -->
-      <div class="absolute top-1/2 left-3 transform -translate-y-1/2">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24"
-          stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M21 21l-4.35-4.35m1.35-5.65a7 7 0 11-14 0 7 7 0 0114 0z" />
-        </svg>
+  <div class="flex justify-center w-full">
+    <div class="w-[35%] mb-8">
+      <div class="relative flex items-center justify-center">
+        <input type="text" id="simple-search"
+          class="bg-gray-50 border border-gray-300 text-sm rounded-full focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5"
+          placeholder="Look for something..." v-model="query" required @keypress.enter="searchCountries()" />
+        <!-- Search Icon -->
+        <div class="absolute top-1/2 left-3 transform -translate-y-1/2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24"
+            stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M21 21l-4.35-4.35m1.35-5.65a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        </div>
       </div>
     </div>
   </div>
 
+
   <!-- Flag Cards Grid -->
-  <div class="grid md:grid-cols-4 sm:grid-cols-2 gap-10">
+  <div v-if="!loading" class="grid md:grid-cols-4 sm:grid-cols-2 gap-10">
     <!-- Dynamically Render Filtered Cards -->
-    <nuxt-link v-for="(card, index) in filteredCards" :key="index" :to="`/countries/${card.id}`"
-      class="bg-gray-100 rounded-lg shadow-md overflow-hidden p-4">
-      <img :src="card.image" :alt="card.name" class="w-full h-32 rounded-lg object-contain" />
-      <div class="p-4">
-        <h2 class="text-lg font-semibold">{{ card.name }}</h2>
-        <p class="text-sm text-gray-500">{{ card.region }}</p>
+    <template v-if="filteredCountries" v-for="countries in filteredCountries">
+      <div class="border rounded-lg overflow-hidden shadow-md bg-white cursor-pointer p-6 "
+        @click="navigateToCountry(countries)">
+        <!-- Image at the top -->
+         <div class="card">
+           <img :src="countries.flags.svg" :alt="countries.name.common"
+          class="w-full h-32 object-contain rounded-lg " />
+         </div>
+       
+        <!-- Card content -->
+        <div class="p-4">
+          <h2 class="text-lg font-semibold">{{ countries.name.common }}</h2>
+          <p class="text-sm text-gray-500">{{ countries.region }}</p>
+        </div>
       </div>
-    </nuxt-link>
+    </template>
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.card {
+  img {
+    scale: 1.2;
+    transition: all 0.3s;
+  }
+
+  &:hover {
+    animation: upDown .2s;
+
+    img {
+      scale: 1;
+    }
+  }
+}
+
+@keyframes upDown {
+  0% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-2px);
+  }
+
+  100% {
+    transform: translateY(0);
+  }
+}
+</style>
