@@ -1,69 +1,102 @@
-<template>
-    <div>
-        <div class="bg-white p-8 rounded-lg shadow-lg max-w-4xl w-full flex flex-col md:flex-row">
-            <!-- Left Section -->
-            <div class="md:w-1/2">
-                <div class="flex items-center space-x-4 mb-6">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Coat_of_arms_of_the_Philippines.svg/800px-Coat_of_arms_of_the_Philippines.svg.png"
-                        alt="Coat of Arms" class="w-16 h-16" />
-                    <div>
-                        <h1 class="text-2xl font-bold">{{ }}</h1>
-                        <p class="text-gray-600">Republic of the Philippines</p>
-                        <p class="text-gray-500">Asia</p>
+
+    <template>
+        <div v-if="!loading" class="p-6 bg-gray-50 min-h-screen">
+            <div class="max-w-6xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
+                <div class="flex flex-col md:flex-row">
+                    <!-- Left Section -->
+                    <div class="md:w-1/2 p-6">
+                        <div class="flex items-center space-x-4 mb-6">
+                            <img :src="country?.flags?.svg" alt="Country Flag" class="w-20 h-20 rounded-lg shadow" />
+                            <div>
+                                <h1 class="text-3xl font-bold text-gray-800">{{ country?.name?.common }}</h1>
+                                <p class="text-gray-500 text-lg">{{ country?.region }}</p>
+                                <p class="text-gray-400 text-md">{{ country?.subregion }}</p>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <h2 class="text-xl font-semibold text-gray-800 mb-4">Flag</h2>
+                            <div class="bg-gray-100 p-4 rounded-lg">
+                                <img :src="country?.flags?.svg" alt="Country Flag" class="w-full h-auto rounded-lg" />
+                            </div>
+                            <p class="text-gray-600 text-sm leading-relaxed mt-4">
+                                The flag of {{ country?.name?.common }} is composed of two equal horizontal bands...
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Right Section -->
+                    <div class="md:w-1/2 p-6 bg-gray-100">
+                        <h2 class="text-2xl font-semibold text-gray-800 mb-6">Country Info</h2>
+                        <ul class="space-y-4 text-gray-700">
+                            <li>
+                                <strong class="block text-gray-800 font-medium">Native Name:</strong>
+                                <span>{{ country?.translations?.eng?.common || 'N/A' }}</span>
+                            </li>
+                            <li>
+                                <strong class="block text-gray-800 font-medium">Population:</strong>
+                                <span>{{ country?.population?.toLocaleString() || 'N/A' }}</span>
+                            </li>
+                            <li>
+                                <strong class="block text-gray-800 font-medium">Capital:</strong>
+                                <span>{{ country?.capital?.[0] || 'N/A' }}</span>
+                            </li>
+                            <li>
+                                <strong class="block text-gray-800 font-medium">Languages:</strong>
+                                <span>{{ Object.values(country?.languages || {}).join(', ') || 'N/A' }}</span>
+                            </li>
+                            <li>
+                                <strong class="block text-gray-800 font-medium">Currencies:</strong>
+                                <span>{{ Object.values(country?.currencies || {}).map(c => c.name).join(', ') || 'N/A'
+                                    }}</span>
+                            </li>
+                        </ul>
                     </div>
                 </div>
-                <div>
-                    <h2 class="font-semibold text-lg mb-2">Flag</h2>
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Flag_of_the_Philippines.svg/800px-Flag_of_the_Philippines.svg.png"
-                        alt="Philippines Flag" class="w-32 mb-4" />
-                    <p class="text-gray-600 text-sm leading-relaxed">
-                        The flag of Philippines is composed of two equal horizontal bands of
-                        blue and red, with a white equilateral triangle superimposed on the
-                        hoist side of the field. This triangle has its base on the hoist
-                        end, spans about two-fifth the width of the field and bears a
-                        central golden-yellow sun with eight rays and a five-pointed
-                        golden-yellow star at each vertex.
-                    </p>
-                </div>
-            </div>
-
-            <!-- Right Section -->
-            <div class="md:w-1/2 md:pl-8 mt-6 md:mt-0">
-                <h2 class="font-semibold text-lg mb-4">Info</h2>
-                <ul class="space-y-2 text-gray-700">
-                    <li>
-                        <strong class="text-gray-800">Native Name:</strong> Pilipinas
-                    </li>
-                    <li>
-                        <strong class="text-gray-800">Population:</strong> 109581085
-                    </li>
-                    <li>
-                        <strong class="text-gray-800">Capital:</strong> Manila
-                    </li>
-                    <li>
-                        <strong class="text-gray-800">Languages:</strong> Filipino, English
-                    </li>
-                    <li>
-                        <strong class="text-gray-800">Currencies:</strong> Philippine peso
-                        (₱)
-                    </li>
-                </ul>
             </div>
         </div>
-    </div>
-</template>
+
+        <div v-else class="flex items-center justify-center min-h-screen bg-gray-50">
+            <p class="text-gray-500 text-lg">Loading...</p>
+        </div>
+    </template>
+
+
+
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
-import { useRoute } from "vue-router";
+import { ref, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
+import { storeToRefs } from 'pinia';
+import { useCountryStore } from '~/stores/useCountryStore';
 
 const route = useRoute();
-const countryId = route.params.id;
+const countryStore = useCountryStore();
+const { countriesData, loading } = storeToRefs(countryStore);
+
 const country = ref(null);
 
+// Fetch the country details using the route parameter
 onMounted(async () => {
-    const response = await fetch(`/countries/countries/${countryId}`);
-    country.value = await response.json();
-    console.log(country.value);
+    if (!countriesData.value.length) {
+        await countryStore.fetchCountries();
+    }
+    const countryCode = route.params.id;
+    country.value = countriesData.value.find((c) => c.cca3 === countryCode);
 });
 </script>
+<style scoped>
+    /* Additional styles for a polished look */
+    body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        h1,
+        h2,
+        strong {
+            letter-spacing: 0.5px;
+        }
+
+        ul li {
+            line-height: 1.6;
+        }
+</style>
