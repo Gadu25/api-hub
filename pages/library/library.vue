@@ -1,30 +1,24 @@
-<script setup lang="ts">
-import newsPlaceholder from '~/assets/images/news-placeholder.png'
+<script setup>
+import { ref } from 'vue';
+import { storeToRefs } from 'pinia';
+import { useLibraryStore } from '~/stores/useLibraryStore';
 
-const books = [
-  {
-    book_id: 1,
-    title: "Article 1",
-    description: "This is a sample description for Article 1. Add as much detail as needed.",
-    details: "Further article information can go here. The layout ensures the content and image are balanced and responsive.",
-    imageSrc: "https://via.placeholder.com/300x400",
-  },
-  {
-    book_id: 2,
-    title: "Article 2",
-    description: "This is a sample description for Article 2. Add as much detail as needed.",
-    details: "Further article information can go here. The layout ensures the content and image are balanced and responsive.",
-    imageSrc: "https://via.placeholder.com/300x400",
-  },
-  {
-    book_id: 3,
-    title: "Article 3",
-    description: "This is a sample description for Article 3. Add as much detail as needed.",
-    details: "Further article information can go here. The layout ensures the content and image are balanced and responsive.",
-    imageSrc: "https://via.placeholder.com/300x400",
-  },
-];
+const libraryStore = useLibraryStore();
+const { books, loading, error } = storeToRefs(libraryStore);
 
+const query = ref('');
+
+const searchBook = async () => {
+  if(query.value.trim()) {
+    await libraryStore.fetchBooks(query.value);
+  } else {
+    alert('Please enter a query before searching for books.');
+  }
+}
+
+const hasImage = (book) => {
+  return book.isbn || book.oclc || book.lccn || book.olid
+}
 </script>
 
 <template>
@@ -34,7 +28,7 @@ const books = [
     </div>
 
     <div class="px-[25%]">
-      <form class="flex items-center  mx-auto mb-10">
+      <form class="flex items-center  mx-auto mb-10" @submit.prevent>
         <label for="simple-search" class="sr-only">Search</label>
         <div class="relative w-full">
           <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
@@ -45,21 +39,24 @@ const books = [
             </svg>
           </div>
           <input type="text" id="simple-search"
-            class="bg-gray-50  text-gray-900 text-sm rounded-full focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5  dark:bg-gray-100 dark:border-gray-200 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            placeholder="Look for something..." required />
+          class="bg-gray-50 border border-gray-300 text-sm rounded-full focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5"
+          placeholder="Look for something..." v-model="query" required @keypress.enter="searchBook()" />
         </div>
       </form>
     </div>
 
     <!-- Grid Layout -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <div v-for="book in books" :key="book.book_id" class="p-2">
-        <nuxt-link :to="`/library/${book.book_id}`" class="block">
+    <div v-if="books.docs" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div v-for="(book, index) in books.docs" class="p-2">
+        <nuxt-link :to="`/library/${index}`" class="block">
           <div
             class="card border shadow-md rounded-lg overflow-hidden grid grid-cols-1 md:grid-cols-2 h-full cursor-pointer">
             <!-- Image Column -->
-            <div class="w-full h-80">
-              <img :src="book.imageSrc" alt="Book Image" class="object-cover w-full h-full" />
+            <div class="w-full h-80" v-if="hasImage(book)">
+              <img class="object-cover w-full h-full" v-if="book.isbn" :src="libraryStore.getBookImage(book.isbn[0], 'isbn')" alt="book-image"/>
+              <img class="object-cover w-full h-full" v-else-if="book.oclc" :src="libraryStore.getBookImage(book.oclc[0], 'oclc')" alt="book-image"/>
+              <img class="object-cover w-full h-full" v-else-if="book.lccn" :src="libraryStore.getBookImage(book.lccn[0], 'lccn')" alt="book-image"/>
+              <img class="object-cover w-full h-full" v-else-if="book.olid" :src="libraryStore.getBookImage(book.olid[0], 'olid')" alt="book-image"/>
             </div>
 
             <!-- Content Column -->
@@ -67,11 +64,11 @@ const books = [
               <h2 class="text-xl font-semibold mb-4 text-gray-700">
                 {{ book.title }}
               </h2>
-              <p class="text-sm text-gray-600 mb-4">
-                {{ book.description }}
+              <p class="text-sm text-gray-600 mb-4 inline-flex items-center" v-if="book.ratings_average">
+                <MdiIcon icon="mdiStar" /> {{ parseFloat(book.ratings_average).toFixed(2) }}
               </p>
-              <p class="text-xs text-gray-500 leading-relaxed">
-                {{ book.details }}
+              <p v-for="author in book.author_name" class="text-xs text-gray-500 leading-relaxed">
+                {{ author }}
               </p>
             </div>
           </div>
@@ -81,4 +78,22 @@ const books = [
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.card {
+  &:hover {
+    animation: upDown .2s;
+  }
+}
+
+@keyframes upDown {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+</style>
