@@ -95,30 +95,35 @@ watchEffect(async () => {
     </div>
 
     <!-- Grid Layout -->
-    <div v-if="books.docs" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <div v-for="(book, index) in books.docs" class="p-2">
-        <nuxt-link :to="`/library/${index}`" class="block h-full">
-          <div class="card border shadow-md rounded-lg overflow-hidden grid grid-cols-1 h-full cursor-pointer" :class="bookHasImages[index]?'md:grid-cols-2':''">
-            <!-- Image Column -->
-            <div class="w-full h-80" v-if="bookHasImages[index]">
-              <img class="object-cover w-full h-full" :src="bookImages[index]" alt="book-image" />
+    <template v-if="!loading">
+      <div v-if="books.docs" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div v-for="(book, index) in books.docs" class="p-2">
+          <nuxt-link :to="`/library/${index}`" class="block h-full">
+            <div class="card border shadow-md rounded-lg overflow-hidden grid grid-cols-1 h-full cursor-pointer" :class="bookHasImages[index]?'md:grid-cols-2':''">
+              <!-- Image Column -->
+              <div class="w-full h-80" v-if="bookHasImages[index]">
+                <img class="object-cover w-full h-full" :src="bookImages[index]" alt="book-image" />
+              </div>
+  
+              <!-- Content Column -->
+              <div class="flex flex-col p-6">
+                <h2 class="text-xl font-semibold mb-4 text-gray-700">
+                  {{ book.title }}
+                </h2>
+                <p class="text-sm text-gray-600 mb-4 inline-flex items-center" v-if="book.ratings_average">
+                  <MdiIcon icon="mdiStar" /> {{ parseFloat(book.ratings_average).toFixed(2) }}
+                </p>
+                <p v-for="author in book.author_name" class="text-xs text-gray-500 leading-relaxed">
+                  {{ author }}
+                </p>
+              </div>
             </div>
-
-            <!-- Content Column -->
-            <div class="flex flex-col p-6">
-              <h2 class="text-xl font-semibold mb-4 text-gray-700">
-                {{ book.title }}
-              </h2>
-              <p class="text-sm text-gray-600 mb-4 inline-flex items-center" v-if="book.ratings_average">
-                <MdiIcon icon="mdiStar" /> {{ parseFloat(book.ratings_average).toFixed(2) }}
-              </p>
-              <p v-for="author in book.author_name" class="text-xs text-gray-500 leading-relaxed">
-                {{ author }}
-              </p>
-            </div>
-          </div>
-        </nuxt-link>
+          </nuxt-link>
+        </div>
       </div>
+    </template>
+    <div v-else class="p-52 flex justify-center items-center">
+      <p>fetching books...</p>
     </div>
   </div>
 </template>
