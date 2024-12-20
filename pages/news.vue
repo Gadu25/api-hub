@@ -1,8 +1,8 @@
 <template>
 
-  <div class="px-[25%]">
+  <div>
 
-    <form class="flex items-center max-w-full mx-auto mb-2" @submit.prevent>
+    <form class="flex items-center max-w-full mx-auto mb-10" @submit.prevent>
       <label for="simple-search" class="sr-only">Search</label>
       <div class="relative w-full">
         <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
@@ -16,14 +16,13 @@
           class="bg-gray-50 border border-gray-300 text-sm rounded-full focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5"
           placeholder="Look for something..." v-model="query" required @keypress.enter="searchNews()" />
       </div>
-
     </form>
 
   </div>
   <!-- Container -->
-  <div v-if="!loading" class="flex flex-wrap gap-4">
+  <div v-if="!loading" class="flex flex-wrap gap-2">
     <template v-for="article in isSearch ? searched.articles : headlineData.articles">
-      <div v-if="article.content != '[Removed]'" class="flex-1 lg:min-w-[calc(50%-1rem)] xl:min-w-[calc(33.333%-1rem)] p-2">
+      <div v-if="article.content != '[Removed]'" class="flex-1 lg:min-w-[calc(50%-1rem)] xl:min-w-[calc(33.333%-1rem)]">
         <!-- Card -->
         <div class="card col-span-2 bg-gray-100 shadow-md rounded-lg overflow-hidden flex h-full cursor-pointer p-6" @click="openUrl(article.url)">
           <!-- Left Column: Full Image -->

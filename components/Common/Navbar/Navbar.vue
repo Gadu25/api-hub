@@ -1,15 +1,10 @@
 <template>
-
-  <div class="   bg--400 ">
-    <div class="p-5"></div>
     <div class="flex-wrap flex justify-between px-3  py-6">
       <a href="#" class=" items-center ">
         <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-gray-700"> {{ paramId.charAt(0).toUpperCase() + paramId.slice(1).toLowerCase() }}</span>
       </a>
       <span class="date-span">2021-12-24 14:23:25</span>
     </div>
-  </div>
-
 </template>
 <script setup lang="ts">
 

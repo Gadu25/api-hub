@@ -76,7 +76,7 @@ watchEffect(async () => {
       <h1 class="font-semibold text-3xl ">Let’ s find a books, What’s on your mind?</h1>
     </div>
 
-    <div class="px-[25%]">
+    <div>
       <form class="flex items-center  mx-auto mb-10" @submit.prevent>
         <label for="simple-search" class="sr-only">Search</label>
         <div class="relative w-full">
@@ -96,10 +96,10 @@ watchEffect(async () => {
 
     <!-- Grid Layout -->
     <template v-if="!loading">
-      <div v-if="books.docs" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div v-for="(book, index) in books.docs" class="p-2">
+      <div v-if="books.docs" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+        <div v-for="(book, index) in books.docs">
           <nuxt-link :to="`/library/${index}`" class="block h-full">
-            <div class="card border shadow-md rounded-lg overflow-hidden grid grid-cols-1 h-full cursor-pointer" :class="bookHasImages[index]?'md:grid-cols-2':''">
+            <div class="card border shadow-md rounded-lg overflow-hidden grid grid-cols-1 h-full cursor-pointer bg-gray-100" :class="bookHasImages[index]?'md:grid-cols-2':''">
               <!-- Image Column -->
               <div class="w-full h-80" v-if="bookHasImages[index]">
                 <img class="object-cover w-full h-full" :src="bookImages[index]" alt="book-image" />
