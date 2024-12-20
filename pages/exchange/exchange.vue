@@ -50,7 +50,7 @@ export default {
 </script>
 
 <template>
-  <div class="p-6">
+  <div>
     <div class="mb-10">
       <h2 class="font-semibold text-2xl lg:text-4xl">Currency Calculator</h2>
     </div>

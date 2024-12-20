@@ -1,54 +1,25 @@
 <template>
-  <div class="flex h-screen">
-    <!-- Sidebar Drawer -->
-    <div
-      :class="{
-        'top-0 left-0 z-10 h-full transition-transform duration-300 delay-150 sm:translate-x-0': true,
-        'translate-x-0': isDrawerOpen,
-        '-translate-x-full': !isDrawerOpen,
-      }"
-      class="py-1 px-3 flex flex-col gap-3 h-screen sm:translate-x-0">
-      <div class="overflow-y-auto rounded-2xl h-full bg-blue-500 dark:bg-blue-500 my-10 p-6">
-        <a class="flex items-center mb-5 ps-2.5">
-          <span class="self-center text-xl font-semibold whitespace-nowrap dark:text-white">
-            {{ isDrawerOpen ? 'API HUB' : 'API' }}
-          </span>
-        </a>
-
-        <!-- Toggle Button -->
-        <button
-          class="absolute top-32 items-center flex transform -translate-y-1/2 bg-orange-400 rounded-full p-2 text-white font-semibold shadow-md transition-all duration-300 delay-200"
-          :class="{
-            'right-0': isDrawerOpen,
-            'right-[0px]': !isDrawerOpen,
-          }"
-          @click="toggleDrawer">
-          <MdiIcon :icon="isDrawerOpen ? 'mdiChevronLeft' : 'mdiChevronRight'" />
-        </button>
-
-        <!-- Menu Items -->
-        <div class="flex flex-col gap-2">
-          <CommonDrawerSidebarMenu
-            v-for="link in menuItems"
-            :key="link.label"
-            :text="link.label"
-            :icon="link.icon"
-            :to="link.to"
-            :is-active="sidebarRoute.path === link.to || false"
-            :isDrawerOpen="isDrawerOpen" />
-        </div>
+  <div class="sidebar-wrapper">
+    <div class="main" :class="{'close':!isDrawerOpen}">
+      <div class="self-center text-xl font-semibold whitespace-nowrap dark:text-white w-full px-2 mb-4">
+        {{ isDrawerOpen ? 'API HUB' : 'API' }}
+      </div>
+      <button
+        class="floating-button"
+        @click="toggleDrawer">
+        <MdiIcon :icon="isDrawerOpen ? 'mdiChevronLeft' : 'mdiChevronRight'" />
+      </button>
+      <div class="flex flex-col gap-2">
+        <CommonDrawerSidebarMenu
+          v-for="link in menuItems"
+          :key="link.label"
+          :text="link.label"
+          :icon="link.icon"
+          :to="link.to"
+          :is-active="sidebarRoute.path === link.to || false"
+          :isDrawerOpen="isDrawerOpen" />
       </div>
     </div>
-
-    <!-- Main Content Area -->
-    <main
-      :class="{
-        'mt-12 transition-all duration-300 delay-300': true,
-        'ml-0': !isDrawerOpen,
-        'ml-30': isDrawerOpen,
-      }">
-      <slot />
-    </main>
   </div>
 </template>
 
@@ -86,17 +57,33 @@ const toggleDrawer = () => {
 </script>
 
 <style scoped>
-.sidebar {
-  transition: width 0.3s ease, transform 0.3s ease;
+.sidebar-wrapper {
+  height: 100vh;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.main {
+  height: 95%;
+  width: 240px;
+  border-radius: 14px;
+  background-color: #3498DB;
+  margin-right: 18px;
+  position: relative;
+  transition: all .3s;
+  padding: 20px;
+}
+.main.close {
+  width: 95px;
 }
 
-button {
-  transition: right 0.3s ease;
-}
-
-@media (max-width: 768px) {
-  .sidebar {
-    transform: translateX(-100%);
-  }
+.main .floating-button {
+  position: absolute;
+  top: 55px;
+  right: -10px;
+  padding: 8px;
+  border-radius: 100%;
+  background-color: #F39C12;
+  color: #ffffff
 }
 </style>

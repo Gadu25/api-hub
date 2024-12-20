@@ -23,7 +23,7 @@ export const useLibraryStore = defineStore('library', {
             return this.books;
         },
         getBookImage(id, directory) {
-            return `https://covers.openlibrary.org/b/${directory}/${id}-L.jpg`;
+            return `https://covers.openlibrary.org/b/${directory}/${id}-M.jpg`;
         }
     },
     persist: {
