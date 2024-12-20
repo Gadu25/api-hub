@@ -1,25 +1,74 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, watchEffect } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useLibraryStore } from '~/stores/useLibraryStore';
+import { checkImageSize } from "~/utils/imageUtils";
 
 const libraryStore = useLibraryStore();
 const { books, loading, error } = storeToRefs(libraryStore);
 
 const query = ref('');
+const bookHasImages = ref([]); // Reactive array to store image availability
+const bookImages = ref([]);    // Reactive array to store image URLs
 
 const searchBook = async () => {
-  if(query.value.trim()) {
+  if (query.value.trim()) {
     await libraryStore.fetchBooks(query.value);
+    bookHasImages.value = []; // Reset state
+    bookImages.value = [];
   } else {
     alert('Please enter a query before searching for books.');
   }
-}
+};
 
-const hasImage = (book) => {
-  return book.isbn || book.oclc || book.lccn || book.olid
-}
+const hasImage = async (book) => {
+  const imageSources = ['isbn', 'oclc', 'lccn', 'olid'];
+
+  for (const source of imageSources) {
+    if (book[source] && Array.isArray(book[source]) && book[source][0]) {
+      const url = await libraryStore.getBookImage(book[source][0], source);
+      const isValid = await checkImageSize(url, 10, 10);
+      if (isValid) {
+        return true;
+      }
+    }
+  }
+  return false;
+};
+
+const getImage = async (book) => {
+  const imageSources = ['isbn', 'oclc', 'lccn', 'olid'];
+
+  for (const source of imageSources) {
+    if (book[source]) {
+      const url = await libraryStore.getBookImage(book[source][0], source);
+      console.log(`Checking URL: ${url}`);
+      const isValid = await checkImageSize(url, 10 , 10);
+      if (isValid) {
+        console.log(`Valid image URL found: ${url}`);
+        return url;
+      }
+    }
+  }
+  console.log(`No valid image found for book: ${book.title}`);
+  return null;
+};
+
+
+// Watch books and process their images
+watchEffect(async () => {
+  if (books.value.docs) {
+    bookHasImages.value = Array(books.value.docs.length).fill(false);
+    bookImages.value = Array(books.value.docs.length).fill(null);
+
+    for (const [index, book] of books.value.docs.entries()) {
+      bookHasImages.value[index] = await hasImage(book);
+      bookImages.value[index] = await getImage(book);
+    }
+  }
+});
 </script>
+
 
 <template>
   <div>
@@ -48,15 +97,11 @@ const hasImage = (book) => {
     <!-- Grid Layout -->
     <div v-if="books.docs" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       <div v-for="(book, index) in books.docs" class="p-2">
-        <nuxt-link :to="`/library/${index}`" class="block">
-          <div
-            class="card border shadow-md rounded-lg overflow-hidden grid grid-cols-1 md:grid-cols-2 h-full cursor-pointer">
+        <nuxt-link :to="`/library/${index}`" class="block h-full">
+          <div class="card border shadow-md rounded-lg overflow-hidden grid grid-cols-1 h-full cursor-pointer" :class="bookHasImages[index]?'md:grid-cols-2':''">
             <!-- Image Column -->
-            <div class="w-full h-80" v-if="hasImage(book)">
-              <img class="object-cover w-full h-full" v-if="book.isbn" :src="libraryStore.getBookImage(book.isbn[0], 'isbn')" alt="book-image"/>
-              <img class="object-cover w-full h-full" v-else-if="book.oclc" :src="libraryStore.getBookImage(book.oclc[0], 'oclc')" alt="book-image"/>
-              <img class="object-cover w-full h-full" v-else-if="book.lccn" :src="libraryStore.getBookImage(book.lccn[0], 'lccn')" alt="book-image"/>
-              <img class="object-cover w-full h-full" v-else-if="book.olid" :src="libraryStore.getBookImage(book.olid[0], 'olid')" alt="book-image"/>
+            <div class="w-full h-80" v-if="bookHasImages[index]">
+              <img class="object-cover w-full h-full" :src="bookImages[index]" alt="book-image" />
             </div>
 
             <!-- Content Column -->
