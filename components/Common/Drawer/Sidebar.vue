@@ -35,7 +35,6 @@
             :icon="link.icon"
             :to="link.to"
             :is-active="sidebarRoute.path === link.to || false"
-            :active-menu="activeColor"
             :isDrawerOpen="isDrawerOpen" />
         </div>
       </div>
