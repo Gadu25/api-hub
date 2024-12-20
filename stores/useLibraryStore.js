@@ -12,18 +12,22 @@ export const useLibraryStore = defineStore('library', {
             this.loading = true;
             try {
                 const books = await getBooks(query);
-                this.books = books
+                this.books = books;
             } catch (error) {
                 this.error = `Failed to fetch data for ${query}`;
             } finally {
                 this.loading = false;
             }
         },
-        getBooks(){
+        getBooks() {
             return this.books;
         },
-        getBookImage(id,directory){
-            return `https://covers.openlibrary.org/b/${directory}/${id}-L.jpg`
+        getBookImage(id, directory) {
+            return `https://covers.openlibrary.org/b/${directory}/${id}-L.jpg`;
         }
+    },
+    persist: {
+        key: 'saved-locations',
+        paths: ['savedLocations']
     }
-})
+});
