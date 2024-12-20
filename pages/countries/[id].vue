@@ -1,10 +1,10 @@
 
     <template>
-        <div v-if="!loading" class="p-6 bg-gray-50 min-h-screen">
-            <div class="max-w-6xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
-                <div class="flex flex-col md:flex-row">
+        <div v-if="!loading">
+            <div class="mx-auto bg-white rounded-lg overflow-hidden">
+                <div class="flex flex-col md:flex-row rounded-lg py-2">
                     <!-- Left Section -->
-                    <div class="md:w-1/2 p-6">
+                    <div>
                         <div class="flex items-center space-x-4 mb-6">
                             <img :src="country?.flags?.svg" alt="Country Flag" class="w-20 h-20 rounded-lg shadow" />
                             <div>
@@ -14,8 +14,8 @@
                             </div>
                         </div>
                         <div class="mt-4">
-                            <h2 class="text-xl font-semibold text-gray-800 mb-4">Flag</h2>
-                            <div class="bg-gray-100 p-4 rounded-lg">
+                            <h2 class="text-xl font-semibold text-gray-800">Flag</h2>
+                            <div class="py-4 rounded-lg">
                                 <img :src="country?.flags?.svg" alt="Country Flag" class="w-full h-auto rounded-lg" />
                             </div>
                             <p class="text-gray-600 text-sm leading-relaxed mt-4">
@@ -25,7 +25,7 @@
                     </div>
 
                     <!-- Right Section -->
-                    <div class="md:w-1/2 p-6 bg-gray-100">
+                    <div class="md:w-1/2 p-6 bg-gray-100 rounded-xl ms-2">
                         <h2 class="text-2xl font-semibold text-gray-800 mb-6">Country Info</h2>
                         <ul class="space-y-4 text-gray-700">
                             <li>
