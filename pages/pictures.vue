@@ -6,7 +6,7 @@
       <h1 class="font-semibold text-3xl ">Let’ s find an image, What’s on your mind?</h1>
     </div>
 
-    <div class="px-[25%]">
+    <div>
       <form class="flex items-center  mx-auto mb-10" @submit.prevent>
         <label for="simple-search" class="sr-only">Search</label>
         <div class="relative w-full">
@@ -24,7 +24,7 @@
       </form>
     </div>
 
-    <div v-if="!loading" class="flex flex-wrap gap-2">
+    <div v-if="!loading" class="flex flex-wrap flex-col lg:flex-row gap-2">
     <template v-if="pictureData" v-for="pic in pictureData.results">
       <div class="flex-1 lg:min-w-[calc(50%-1rem)] xl:min-w-[calc(33.333%-1rem)] ">
         <div class="card col-span-2 bg-gray-100 shadow-md rounded-lg overflow-hidden flex h-full cursor-pointer relative" @click="openUrl(pic.urls.full)">

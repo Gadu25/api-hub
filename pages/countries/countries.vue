@@ -49,7 +49,7 @@ onMounted(async () => {
 <template>
   <!-- Search Bar -->
   <div class="flex justify-center w-full">
-    <div class="w-[35%] mb-8">
+    <div class="w-full mb-10">
       <div class="relative flex items-center justify-center">
         <input type="text" id="simple-search"
           class="bg-gray-50 border border-gray-300 text-sm rounded-full focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5"
@@ -68,15 +68,15 @@ onMounted(async () => {
 
 
   <!-- Flag Cards Grid -->
-  <div v-if="!loading" class="grid md:grid-cols-4 sm:grid-cols-2 gap-10">
+  <div v-if="!loading" class="grid md:grid-cols-4 sm:grid-cols-2 gap-2">
     <!-- Dynamically Render Filtered Cards -->
     <template v-if="filteredCountries" v-for="countries in filteredCountries">
-      <div class="border rounded-lg overflow-hidden shadow-md bg-white cursor-pointer p-6 "
+      <div class="card rounded-lg overflow-hidden shadow-md cursor-pointer bg-gray-100"
         @click="navigateToCountry(countries)">
         <!-- Image at the top -->
-         <div class="card">
+         <div class="rounded overflow-hidden">
            <img :src="countries.flags.svg" :alt="countries.name.common"
-          class="w-full h-32 object-contain rounded-lg " />
+            class="w-full h-32 object-contain rounded " />
          </div>
        
         <!-- Card content -->
