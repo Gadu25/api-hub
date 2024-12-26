@@ -13,7 +13,31 @@ export const useJokeStore = defineStore('joke', {
 
       try {
         const jokes = await getJokes(filters);
-        this.jokeData = jokes;
+        if(jokes.amount){
+          this.jokeData = jokes.jokes
+        }else{
+          this.jokeData = [
+            jokes.type == 'twopart' ? {
+            'category': jokes.category,
+            'delivery': jokes.delivery,
+            'flags': jokes.flags,
+            'id': jokes.id,
+            'lang': jokes.lang,
+            'safe': jokes.safe,
+            'setup': jokes.setup,
+            'type': jokes.type
+          }:
+          {
+            'category': jokes.category,
+            'flags': jokes.flags,
+            'id': jokes.id,
+            'lang': jokes.lang,
+            'safe': jokes.safe,
+            'type': jokes.type,
+            'joke': jokes.joke
+          }
+        ]
+        }
       } catch (error) {
         this.error = 'Failed to fetch jokes';
       } finally {
