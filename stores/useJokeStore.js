@@ -16,7 +16,8 @@ export const useJokeStore = defineStore('joke', {
         if(jokes.amount){
           this.jokeData = jokes.jokes
         }else{
-          this.jokeData = [{
+          this.jokeData = [
+            jokes.type == 'twopart' ? {
             'category': jokes.category,
             'delivery': jokes.delivery,
             'flags': jokes.flags,
@@ -25,7 +26,17 @@ export const useJokeStore = defineStore('joke', {
             'safe': jokes.safe,
             'setup': jokes.setup,
             'type': jokes.type
-          }]
+          }:
+          {
+            'category': jokes.category,
+            'flags': jokes.flags,
+            'id': jokes.id,
+            'lang': jokes.lang,
+            'safe': jokes.safe,
+            'type': jokes.type,
+            'joke': jokes.joke
+          }
+        ]
         }
       } catch (error) {
         this.error = 'Failed to fetch jokes';
