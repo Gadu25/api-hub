@@ -1,15 +1,19 @@
 <template>
-    <div class="w-full flex p-2 gap-8">
+    <div class="w-full flex flex-col xl:flex-row p-2 gap-8">
         <!-- Left Column (Book Details) -->
-        <div class="bg-white rounded-lg border shadow p-6 w-[80%]">
+        <div class="bg-white rounded-lg border shadow p-6 xl:w-[80%] overflow-auto xl:max-h-[80vh]">
             <!-- Book Information -->
-            <div class="flex gap-6">
+            <div class="flex flex-col md:flex-row gap-6">
                 <!-- Book Image -->
-                <div class="w-40 h-60 bg-gray-200 rounded-lg overflow-hidden" v-if="hasImage(books.docs[id])">
+                <!-- <div class="w-40 h-60 bg-gray-200 rounded-lg overflow-hidden" v-if="hasImage(books.docs[id])">
                     <img class="object-cover w-full h-full" v-if="books.docs[id].isbn" :src="libraryStore.getBookImage(books.docs[id].isbn[0], 'isbn')" alt="book-image"/>
                     <img class="object-cover w-full h-full" v-else-if="books.docs[id].oclc" :src="libraryStore.getBookImage(books.docs[id].oclc[0], 'oclc')" alt="book-image"/>
                     <img class="object-cover w-full h-full" v-else-if="books.docs[id].lccn" :src="libraryStore.getBookImage(books.docs[id].lccn[0], 'lccn')" alt="book-image"/>
                     <img class="object-cover w-full h-full" v-else-if="books.docs[id].olid" :src="libraryStore.getBookImage(books.docs[id].olid[0], 'olid')" alt="book-image"/>
+                </div> -->
+
+                <div class="w-40 h-60 bg-gray-200 rounded-lg overflow-hidden" v-if="bookHasImages[id]">
+                    <img class="object-cover w-full h-full" :src="bookImages[id]" alt="book-image" />
                 </div>
 
                 <!-- Book Details -->
@@ -99,43 +103,27 @@
         </div>
 
         <!-- Right Column (Other Results) -->
-        <div class="bg-white rounded-lg border shadow p-6 w-[20%]">
+        <div class="bg-white rounded-lg border shadow p-6 xl:w-[20%] overflow-auto xl:max-h-[80vh]">
             <h2 class="text-lg font-semibold mb-4">Other results of your search</h2>
             <div class="space-y-4">
-                <!-- Result Card -->
-                <div class="flex items-center gap-4">
-                    <div class="w-16 h-24 bg-gray-200 rounded-lg overflow-hidden">
-                        <img src="https://via.placeholder.com/50x75" alt="Thumbnail"
-                            class="object-cover w-full h-full" />
-                    </div>
-                    <div>
-                        <p class="text-sm font-semibold text-gray-700">The fellowship of rings</p>
-                        <p class="text-xs text-gray-500">J.R.R. Tolkien</p>
-                    </div>
-                </div>
-
-                <!-- Duplicate Results -->
-                <div class="flex items-center gap-4">
-                    <div class="w-16 h-24 bg-gray-200 rounded-lg overflow-hidden">
-                        <img src="https://via.placeholder.com/50x75" alt="Thumbnail"
-                            class="object-cover w-full h-full" />
-                    </div>
-                    <div>
-                        <p class="text-sm font-semibold text-gray-700">The fellowship of rings</p>
-                        <p class="text-xs text-gray-500">J.R.R. Tolkien</p>
-                    </div>
-                </div>
-
-                <div class="flex items-center gap-4">
-                    <div class="w-16 h-24 bg-gray-200 rounded-lg overflow-hidden">
-                        <img src="https://via.placeholder.com/50x75" alt="Thumbnail"
-                            class="object-cover w-full h-full" />
-                    </div>
-                    <div>
-                        <p class="text-sm font-semibold text-gray-700">The fellowship of rings</p>
-                        <p class="text-xs text-gray-500">J.R.R. Tolkien</p>
-                    </div>
-                </div>
+                 <template v-for="(book, index) in books.docs">
+                    <nuxt-link v-if="index != id" :to="`/library/${index}`" class="block border-b pb-2">
+                        <div class="flex items-center gap-2">
+                            <div class="w-16 h-24 bg-gray-200 rounded-lg overflow-hidden" v-if="bookHasImages[index]">
+                                <img class="object-cover w-full h-full" :src="bookImages[index]" alt="book-image" />
+                            </div>
+                            <div>
+                                <p class="text-sm font-semibold text-gray-700">{{ book.title }}</p>
+                                <p v-for="author in book.author_name" class="text-xs text-gray-500">
+                                    {{ author }}
+                                </p>
+                                <p v-if="book.ratings_count > 0" class="text-xs text-gray-500">
+                                    {{ parseFloat(books.docs[id].ratings_average).toFixed(2) }} ★
+                                </p>
+                            </div>
+                        </div>
+                    </nuxt-link>
+                 </template>
             </div>
         </div>
     </div>
@@ -143,21 +131,69 @@
 
 
 <script setup>
-import newsPlaceholder from '~/assets/images/news-placeholder.png'
 import { ref } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useLibraryStore } from '~/stores/useLibraryStore';
 import { useRoute } from 'vue-router';
+import { checkImageSize } from "~/utils/imageUtils";
 
 const libraryStore = useLibraryStore();
 const { books, loading, error } = storeToRefs(libraryStore);
 
 const route = useRoute();
 const id = ref(route.params.id)
+const bookHasImages = ref([]); // Reactive array to store image availability
+const bookImages = ref([]);    // Reactive array to store image URLs
 
-const hasImage = (book) => {
-  return book.isbn || book.oclc || book.lccn || book.olid
-}
+// const hasImage = (book) => {
+//   return book.isbn || book.oclc || book.lccn || book.olid
+// }
+
+const hasImage = async (book) => {
+  const imageSources = ['isbn', 'oclc', 'lccn', 'olid'];
+
+  for (const source of imageSources) {
+    if (book[source] && Array.isArray(book[source]) && book[source][0]) {
+      const url = await libraryStore.getBookImage(book[source][0], source);
+      const isValid = await checkImageSize(url, 10, 10);
+      if (isValid) {
+        return true;
+      }
+    }
+  }
+  return false;
+};
+
+const getImage = async (book) => {
+  const imageSources = ['isbn', 'oclc', 'lccn', 'olid'];
+
+  for (const source of imageSources) {
+    if (book[source]) {
+      const url = await libraryStore.getBookImage(book[source][0], source);
+      console.log(`Checking URL: ${url}`);
+      const isValid = await checkImageSize(url, 10 , 10);
+      if (isValid) {
+        console.log(`Valid image URL found: ${url}`);
+        return url;
+      }
+    }
+  }
+  console.log(`No valid image found for book: ${book.title}`);
+  return null;
+};
+
+// Watch books and process their images
+watchEffect(async () => {
+  if (books.value.docs) {
+    bookHasImages.value = Array(books.value.docs.length).fill(false);
+    bookImages.value = Array(books.value.docs.length).fill(null);
+
+    for (const [index, book] of books.value.docs.entries()) {
+      bookHasImages.value[index] = await hasImage(book);
+      bookImages.value[index] = await getImage(book);
+    }
+  }
+});
 
 const getDynamicRatingWidth = (rate) => {
     const rateCount = books.value.docs[id.value].ratings_count

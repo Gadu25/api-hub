@@ -16,7 +16,7 @@
 
 <style scoped>
 .content-wrapper {
-    height: calc(100vh - 164px);
+    height: calc(100vh - 108px);
     overflow-y: auto;
     border-radius: 20px;
 }
