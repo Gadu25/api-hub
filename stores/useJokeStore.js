@@ -13,7 +13,20 @@ export const useJokeStore = defineStore('joke', {
 
       try {
         const jokes = await getJokes(filters);
-        this.jokeData = jokes;
+        if(jokes.amount){
+          this.jokeData = jokes.jokes
+        }else{
+          this.jokeData = [{
+            'category': jokes.category,
+            'delivery': jokes.delivery,
+            'flags': jokes.flags,
+            'id': jokes.id,
+            'lang': jokes.lang,
+            'safe': jokes.safe,
+            'setup': jokes.setup,
+            'type': jokes.type
+          }]
+        }
       } catch (error) {
         this.error = 'Failed to fetch jokes';
       } finally {
