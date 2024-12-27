@@ -5,9 +5,10 @@ export interface UserData {
 }
 
 export interface filterData {
-    'gender': '',
-    'results': 0,
-    'nat': 'us'
+    gender: string,
+    results: number,
+    nat: string,
+
 }
 
 export const getUsersData = async (filters: filterData): Promise<UserData> => {
