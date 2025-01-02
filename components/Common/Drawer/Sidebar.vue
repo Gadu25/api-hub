@@ -39,8 +39,8 @@ watch(
 
 const menuItems = [
   { label: 'Weather', icon: 'mdiWeatherPouring', to: '/weather/weather' },
-  { label: 'News', icon: 'mdiNewspaperVariantOutline', to: '/news' },
-  { label: 'Pictures', icon: 'mdiPictureInPictureTopRightOutline', to: '/pictures' },
+  { label: 'News', icon: 'mdiNewspaperVariantOutline', to: '/news/news' },
+  { label: 'Pictures', icon: 'mdiPictureInPictureTopRightOutline', to: '/pictures/pictures' },
   { label: 'Countries', icon: 'mdiFlagOutline', to: '/countries/countries' },
   { label: 'Users', icon: 'mdiAccountMultipleOutline', to: '/users/users' },
   { label: 'Jokes', icon: 'mdiAlphaJ', to: '/joke/joke' },
