@@ -32,8 +32,8 @@ export default {
 
     watch([amount, toCurrency], convert);
 
-    onMounted(() => {
-      exchangeRateStore.fetchSupportedCodes();
+    onMounted(async() => {
+     await exchangeRateStore.fetchSupportedCodes();
       fetchAndConvert();
     });
 
