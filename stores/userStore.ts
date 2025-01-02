@@ -1,48 +1,43 @@
-// stores/userStore.ts
+// Add methods for localStorage handling to the store
+
 import { defineStore } from 'pinia';
+import { getUsersData } from '~/api/user';
 
 export const useUserStore = defineStore('user', {
+
   state: () => ({
-    selectedGender: '',
-    selectedNationality: ''
+    userData: {},
+    loading: false,
+    error: null,
+    results: 0,
+    selectedGender: 'ALL',
+    selectedNationality: 'ALL',
   }),
-
   actions: {
-    // Helper method to check if we're in a browser environment
-    isBrowser() {
-      return typeof window !== 'undefined';
-    },
-
-    setSelectedGender(gender: string) {
-      this.selectedGender = gender;
-      if (this.isBrowser()) {
-        localStorage.setItem('selectedGender', gender); // Save to localStorage only if in the browser
+    async fetchUser(filter) {
+      this.loading = true;
+      try {
+        const users = await getUsersData(filter);
+        this.userData = users;
+      } catch (error) {
+        this.error = 'Failed to fetch data';
+      } finally {
+        this.loading = false;
       }
     },
-
-    setSelectedNationality(nationality: string) {
-      this.selectedNationality = nationality;
-      if (this.isBrowser()) {
-        localStorage.setItem('selectedNationality', nationality); // Save to localStorage only if in the browser
-      }
-    },
-
     saveSelections(gender: string, nationality: string) {
-      this.setSelectedGender(gender);
-      this.setSelectedNationality(nationality);
+      this.selectedGender = gender;
+      this.selectedNationality = nationality;
+
+      localStorage.setItem('selectedGender', gender);
+      localStorage.setItem('selectedNationality', nationality);
     },
-
-    // Method to load from localStorage if available
     loadFromLocalStorage() {
-      if (this.isBrowser()) {
-        const savedGender = localStorage.getItem('selectedGender');
-        const savedNationality = localStorage.getItem('selectedNationality');
-        if (savedGender) this.selectedGender = savedGender;
-        if (savedNationality) this.selectedNationality = savedNationality;
-      }
-    }
+      this.selectedGender = localStorage.getItem('selectedGender') || 'ALL';
+      this.selectedNationality = localStorage.getItem('selectedNationality') || 'ALL';
+    },
+    getUsersData() {
+      return this.userData;
+    },
   },
-
-  // Using a lifecycle hook to load data from localStorage when the store is first initialized
-  persist: true
 });
