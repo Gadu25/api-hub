@@ -1,93 +1,107 @@
 <template>
-  <div class=" flex-wrap gap-4">
-    <!-- First Box -->
-    <div v-if="!showForm"
-      class="box w-80 h-48 bg-gray-300 items-center flex justify-center rounded-lg hover:cursor-pointer"
-      @click="showForm = !showForm">
-      <MdiIcon class="text-white size-8" icon="mdiPlusCircle" />
-    </div>
-    <div v-if="showForm" class="w-80 h-48 bg-gray-300 p-4 flex flex-col justify-start rounded-lg relative">
-      <div>
-        <label for="first_name" class="block mb-2 text-xl font-medium text-gray-900 dark:text-white">
-          Enter Location
-        </label>
-        <input id="location" v-model="newLocation" type="text" placeholder="Location"
-          class="mb-2 w-full p-2 rounded border border-gray-400" />
-      </div>
-      <button @click="cancelForm" type="button"
-        class="text-white bg-orange-700 hover:bg-yellow-400 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-yellow-400 dark:hover:bg-yellow-600 focus:outline-none dark:focus:ring-yellow-400 absolute bottom-4">
-        Cancel
-      </button>
-      <button @click="addLocation" type="button"
-        class="text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-green-600 dark:hover:bg-green-700 focus:outline-none dark:focus:ring-green-800 absolute bottom-4 right-4">
-        Submit
-      </button>
-    </div>
+  <div class="min-h-screen  flex flex-col items-center text-white p-6">
+    <!-- Header -->
+    <header class="w-full bg-blue-700 text-white py-6 text-center rounded-lg shadow-md">
+      <h1 class="text-3xl font-extrabold">Weather Hub</h1>
+      <p class="text-sm">Your daily weather companion</p>
+    </header>
 
     <!-- Main Content -->
-    <div class="flex flex-wrap gap-4 mt-4">
-      <nuxt-link v-for="(item, index) in locations" :key="index" :to="`/weather/${item.id}`">
+    <main class="flex-grow w-full max-w-4xl mt-8">
+      <!-- Add Location Form -->
+      <div class="flex justify-between items-center bg-white text-gray-700 p-4 rounded-lg shadow-lg mb-8">
+        <input
+          v-model="newCity"
+          type="text"
+          placeholder="Enter city name"
+          class="w-full border rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+        />
+        <button
+          @click="addCity"
+          class="ml-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-300"
+        >
+          Add
+        </button>
+      </div>
 
+      <!-- Weather Cards -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         <div
-          class="bg-gray-100 w-80 h-48 p-4 flex flex-col justify-start rounded-lg hover:cursor-pointer"
-          @click="navigateToDetails(item.id)">
-          <h2 class="text-lg font-semibold">{{ item.location }}</h2>
-          <p>Temperature: {{ item.temperature }}°C</p>
-          <p>Condition: {{ item.condition }}</p>
-        </div>
-      </nuxt-link>
+          v-for="city in weatherStore.savedLocations"
+          :key="city"
+          class="bg-white text-gray-800 rounded-lg shadow-md p-6 relative flex flex-col items-center text-center"
+        >
+          <!-- Remove Button -->
+          <button
+            @click="removeCity(city)"
+            class="absolute top-2 right-2 bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-700"
+          >
+            ✕
+          </button>
+          <!-- City Name -->
+          <h2 class="text-xl font-bold text-blue-600">{{ city }}</h2>
 
-    </div>
+          <!-- Weather Data -->
+          <div v-if="weatherStore.weatherData[city]" class="mt-4">
+            <img
+              :src="`http://openweathermap.org/img/wn/${weatherStore.weatherData[city].weather[0].icon}@2x.png`"
+              :alt="weatherStore.weatherData[city].weather[0].description"
+              class="w-16 h-16 mx-auto"
+            />
+            <p class="text-lg font-semibold">{{ (weatherStore.weatherData[city].main.temp - 273.15).toFixed(2) }}°C</p>
+            <p class="text-gray-600 capitalize">{{ weatherStore.weatherData[city].weather[0].description }}</p>
+            <div class="mt-2 text-sm text-gray-500">
+              <p>Min: {{ (weatherStore.weatherData[city].main.temp_min - 273.15).toFixed(2) }}°C | Max: {{ (weatherStore.weatherData[city].main.temp_max - 273.15).toFixed(2) }}°C</p>
+              <p>Humidity: {{ weatherStore.weatherData[city].main.humidity }}%</p>
+              <p>Wind: {{ weatherStore.weatherData[city].wind.speed }} m/s</p>
+            </div>
+          </div>
+
+          <!-- Loading and Error States -->
+          <div v-else-if="weatherStore.loading" class="text-gray-500 mt-4">
+            Loading...
+          </div>
+          <div v-else class="text-red-500 mt-4">
+            Failed to load data
+          </div>
+        </div>
+      </div>
+
+      <!-- Error Message -->
+      <div v-if="weatherStore.error" class="mt-6 text-red-400 text-center">
+        {{ weatherStore.error }}
+      </div>
+    </main>
+
+   
   </div>
 </template>
 
-<script setup lang="ts">
-import { ref, onMounted } from "vue";
-import { useRouter } from "vue-router";
-
-const router = useRouter();
-
-const showForm = ref(false);
-const newLocation = ref("");
-const locations = ref<{ id: string; location: string; temperature: number; condition: string }[]>([]);
-const generateId = () => "_" + Math.random().toString(36).substring(2, 11);
-
-const addLocation = () => {
-  if (!newLocation.value) return;
-
-  const newEntry = {
-    id: generateId(),
-    location: newLocation.value,
-    temperature: Math.floor(Math.random() * 40),
-    condition: ["Sunny", "Cloudy", "Rainy"][Math.floor(Math.random() * 3)],
-  };
-
-  const storedData = JSON.parse(localStorage.getItem("locations") || "[]");
-  storedData.unshift(newEntry);
-  localStorage.setItem("locations", JSON.stringify(storedData));
-
-  locations.value.unshift(newEntry);
-
-  newLocation.value = "";
-  showForm.value = false;
+<script>
+import { ref } from 'vue';
+import { useWeatherStore } from '~/stores/useWeatherStore';
+export default {
+  setup() {
+    const weatherStore = useWeatherStore();
+    const newCity = ref('');
+    const addCity = () => {
+      if (newCity.value.trim()) {
+        weatherStore.addLocation(newCity.value.trim());
+        newCity.value = '';
+      }
+    };
+    const removeCity = (city) => {
+      weatherStore.removeLocation(city);
+    };
+    return {
+      weatherStore,
+      newCity,
+      addCity,
+      removeCity,
+    };
+  },
 };
-
-const cancelForm = () => {
-  showForm.value = false;
-  newLocation.value = "";
-};
-const navigateToDetails = (id: string) => {
-
-  router.push({ name: "weather", params: { id: id } });
-};
-
-onMounted(() => {
-  const storedData = JSON.parse(localStorage.getItem("locations") || "[]");
-  locations.value = storedData;
-});
 </script>
-
-<style scoped>
-/* Additional styles if necessary */
+<style>
+/* Add any additional custom styles if needed */
 </style>
-
