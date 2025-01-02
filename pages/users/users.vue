@@ -69,9 +69,9 @@ const isGenerateButtonEnabled = computed(() => {
 
 <template>
   <div>
-    <div class="grid grid-cols-2 gap-4 p-4 bg-white shadow-lg rounded-md">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 p-4 rounded-md">
       <!-- Left Panel -->
-      <div class="p-6">
+      <div>
         <h2 class="font-semibold text-2xl mb-6">Generate Users</h2>
 
         <!-- Gender Dropdown -->
@@ -115,7 +115,7 @@ const isGenerateButtonEnabled = computed(() => {
         <div v-if="userStore.loading">Loading...</div>
         <div v-else-if="userStore.error" class="text-red-500">{{ userStore.error }}</div>
         <div v-else-if="showResults">
-          <ul class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <ul class="grid grid-cols-1 xl:grid-cols-2 gap-2 xl:gap-4">
             <li
               v-for="(user, index) in filteredUsers"
               :key="index"
