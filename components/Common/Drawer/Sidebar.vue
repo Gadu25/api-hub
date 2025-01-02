@@ -17,7 +17,7 @@
           :icon="link.icon"
           :to="link.to"
           :is-active="sidebarRoute.path === link.to || false"
-          :isDrawerOpen="isDrawerOpen" />
+          :isDrawerOpen="isDrawerOpen" /> 
       </div>
     </div>
   </div>
