@@ -1,13 +1,8 @@
 <template>
-  <div class="min-h-screen  flex flex-col items-center text-white p-6">
-    <!-- Header -->
-    <header class="w-full bg-blue-700 text-white py-6 text-center rounded-lg shadow-md">
-      <h1 class="text-3xl font-extrabold">Weather Hub</h1>
-      <p class="text-sm">Your daily weather companion</p>
-    </header>
-
+  <div class="min-h-screen flex flex-col items-center text-white p-6">
     <!-- Main Content -->
-    <main class="flex-grow w-full max-w-4xl mt-8">
+    <main class="flex-grow w-full">
+      
       <!-- Add Location Form -->
       <div class="flex justify-between items-center bg-white text-gray-700 p-4 rounded-lg shadow-lg mb-8">
         <input
@@ -22,6 +17,11 @@
         >
           Add
         </button>
+      </div>
+
+      <!-- Error Message -->
+      <div v-if="weatherStore.error" class="mt-6 text-red-400 text-center">
+        {{ weatherStore.error }}
       </div>
 
       <!-- Weather Cards -->
@@ -65,11 +65,6 @@
             Failed to load data
           </div>
         </div>
-      </div>
-
-      <!-- Error Message -->
-      <div v-if="weatherStore.error" class="mt-6 text-red-400 text-center">
-        {{ weatherStore.error }}
       </div>
     </main>
 

@@ -68,7 +68,7 @@ onMounted(async () => {
 
 
   <!-- Flag Cards Grid -->
-  <div v-if="!loading" class="grid md:grid-cols-4 sm:grid-cols-2 gap-2">
+  <div v-if="!loading" class="grid lg:grid-cols-6 md:grid-cols-4 sm:grid-cols-2 gap-8 lg:gap-12">
     <!-- Dynamically Render Filtered Cards -->
     <template v-if="filteredCountries" v-for="countries in filteredCountries">
       <div class="card rounded-lg overflow-hidden shadow-md cursor-pointer bg-gray-100"
