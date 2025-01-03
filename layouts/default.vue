@@ -33,7 +33,7 @@ onUnmounted(() => {
 
 <style scoped>
 .content-wrapper {
-  height: calc(100vh - 108px);
+  height: calc(100vh - 115px);
   overflow-y: auto;
   border-radius: 20px;
 }
