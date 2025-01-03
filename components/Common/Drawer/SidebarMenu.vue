@@ -1,6 +1,6 @@
 <template>
   <div :class="{ 'active-color': isActive, 'text-white rounded-md': true }">
-    <nuxt-link class="item w-full px-2 py-3 flex items-center gap-2" :class="{'scale-110': isActive, 'font-bold': isActive}" :to="to">
+    <nuxt-link class="item w-full py-3 flex items-center gap-2" :class="{'font-bold': isActive}" :to="to">
       <MdiIcon  size="40" :icon="icon" :class="{'active-color': isActive}"/>
       <span v-if="isDrawerOpen" :class="{ 'active-color': isActive }" class="text-md">
         {{ text }}
