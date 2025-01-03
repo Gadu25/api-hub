@@ -25,7 +25,7 @@
 
       <!-- Card Grid -->
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        <div v-for="city in weatherStore.savedLocations" :key="city"
+        <nuxt-link :to="`weather/${city}`" v-for="city in weatherStore.savedLocations" :key="city"
           class="bg-gradient-to-b from-blue-500 to-blue-400 w-full rounded-xl shadow-xl p-6 relative">
           <button @click="removeCity(city)"
             class="absolute top-2 right-2 bg-slate-100 text-red-300 rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-700">
@@ -67,7 +67,7 @@
               <p>Hum: {{ weatherStore.weatherData[city].main.humidity }}%</p>
             </div>
           </div>
-        </div>
+        </nuxt-link>
       </div>
 
       <!-- Error Message (for display) -->
