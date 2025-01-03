@@ -17,7 +17,6 @@ const searchCountries = async () => {
   if (query.value.trim()) {
     await countryStore.fetchCountries();
     isSearch.value = true;
-    console.log("country", countriesData.value);
   } else {
     alert('Please enter a query before fetching picture.');
   }
@@ -41,8 +40,6 @@ const navigateToCountry = (country: { cca3: string; }) => {
 onMounted(async () => {
   await countryStore.fetchCountries();
   // Initially, navigate to the first country after fetching countries
-
-  console.log("Countries loaded on mount:", countriesData.value);
 });
 </script>
 

@@ -27,7 +27,6 @@ import { onMounted, ref } from 'vue';
 const route = useRoute();
 const paramId = computed(() => {
   const urlSegments = route.fullPath.split('/');
-  console.log('segments', urlSegments)
   if (urlSegments.length <= 2) {
     const word = urlSegments[urlSegments.length - 1]
     const firstLetter = word.charAt(0)
