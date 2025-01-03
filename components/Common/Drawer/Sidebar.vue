@@ -17,7 +17,7 @@
           :icon="link.icon"
           :to="link.to"
           :is-active="sidebarRoute.path === link.to || false"
-          :isDrawerOpen="isDrawerOpen" />
+          :isDrawerOpen="isDrawerOpen" /> 
       </div>
     </div>
   </div>
@@ -38,15 +38,15 @@ watch(
 );
 
 const menuItems = [
-  { label: 'Weather', icon: 'mdiWeatherPouring', to: '/weather/weather' },
+  { label: 'Weather', icon: 'mdiWeatherPouring', to: '/weather' },
   { label: 'News', icon: 'mdiNewspaperVariantOutline', to: '/news' },
   { label: 'Pictures', icon: 'mdiPictureInPictureTopRightOutline', to: '/pictures' },
-  { label: 'Countries', icon: 'mdiFlagOutline', to: '/countries/countries' },
-  { label: 'Users', icon: 'mdiAccountMultipleOutline', to: '/users/users' },
-  { label: 'Jokes', icon: 'mdiAlphaJ', to: '/joke/joke' },
-  { label: 'Exchange', icon: 'mdiSwapHorizontal', to: '/exchange/exchange' },
-  { label: 'NASA', icon: 'mdiSpaceStation', to: '/nasa/nasa' },
-  { label: 'Library', icon: 'mdiLibraryOutline', to: '/library/library' },
+  { label: 'Countries', icon: 'mdiFlagOutline', to: '/countries' },
+  { label: 'Users', icon: 'mdiAccountMultipleOutline', to: '/users' },
+  { label: 'Jokes', icon: 'mdiAlphaJ', to: '/joke' },
+  { label: 'Exchange', icon: 'mdiSwapHorizontal', to: '/exchange' },
+  { label: 'NASA', icon: 'mdiSpaceStation', to: '/nasa' },
+  { label: 'Library', icon: 'mdiLibraryOutline', to: '/library' },
 ];
 
 const isDrawerOpen = ref(true);

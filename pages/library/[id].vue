@@ -118,7 +118,7 @@
                                     {{ author }}
                                 </p>
                                 <p v-if="book.ratings_count > 0" class="text-xs text-gray-500">
-                                    {{ parseFloat(books.docs[id].ratings_average).toFixed(2) }} ★
+                                    {{ parseFloat(book.ratings_average).toFixed(2) }} ★
                                 </p>
                             </div>
                         </div>

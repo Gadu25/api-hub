@@ -22,16 +22,16 @@
   <!-- Container -->
   <div v-if="!loading" class="flex flex-wrap gap-2">
     <template v-for="article in isSearch ? searched.articles : headlineData.articles">
-      <div v-if="article.content != '[Removed]'" class="flex-1 lg:min-w-[calc(50%-1rem)] xl:min-w-[calc(33.333%-1rem)]">
+      <div v-if="article.content != '[Removed]'" class="flex-1 min-w-80">
         <!-- Card -->
-        <div class="card col-span-2 bg-gray-100 shadow-md rounded-lg overflow-hidden flex h-full cursor-pointer p-6" @click="openUrl(article.url)">
+        <div class="card col-span-2 bg-gray-100 shadow-md rounded-lg overflow-hidden flex flex-col h-full cursor-pointer p-6" @click="openUrl(article.url)">
           <!-- Left Column: Full Image -->
-            <div class="w-96 h-80 rounded-lg overflow-hidden ">
-              <img :src="article.urlToImage ? article.urlToImage: newsPlaceholder" alt="News Image"
-                class="object-cover h-full" />
-            </div>
+          <div class="h-80 rounded-lg overflow-hidden ">
+            <img :src="article.urlToImage ? article.urlToImage: newsPlaceholder" alt="News Image"
+              class="object-cover h-full" />
+          </div>
           <!-- Right Column: Content -->
-          <div class="w-4/5 ms-4 flex flex-col">
+          <div class="w-4/5 mt-2 flex flex-col">
             <h2 class="text-lg font-semibold mb-2">
               {{ article.title }}
             </h2>

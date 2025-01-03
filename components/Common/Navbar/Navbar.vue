@@ -3,7 +3,7 @@
       <div class="flex gap-4 items-center">
         <MdiIcon v-if="props.hasMobileNav" size="40" icon="mdiMenu" class="text-slate-900 cursor-pointer mobile-burger" @click="showNav = true"/>
         <a href="#" class="items-center">
-          <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-gray-700"> {{ paramId.charAt(0).toUpperCase() + paramId.slice(1).toLowerCase() }}</span>
+          <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-gray-700">{{ paramId }}</span>
         </a>
       </div>
       <span class="date-span">2021-12-24 14:23:25</span>
@@ -27,7 +27,15 @@
 const route = useRoute();
 const paramId = computed(() => {
   const urlSegments = route.fullPath.split('/');
-  return urlSegments[urlSegments.length - 1];
+  const word = urlSegments[urlSegments.length - 1]
+  const firstLetter = word.charAt(0)
+
+  const firstLetterCap = firstLetter.toUpperCase()
+
+  const remainingLetters = word.slice(1)
+
+  const capitalizedWord = firstLetterCap + remainingLetters
+  return capitalizedWord;
 });
 const router = useRouter();
 const currentRoute = computed(() => router.currentRoute.value);
@@ -44,15 +52,15 @@ const props = defineProps({
 });
 
 const menuItems = [
-  { label: 'Weather', icon: 'mdiWeatherPouring', to: '/weather/weather' },
+  { label: 'Weather', icon: 'mdiWeatherPouring', to: '/weather' },
   { label: 'News', icon: 'mdiNewspaperVariantOutline', to: '/news' },
   { label: 'Pictures', icon: 'mdiPictureInPictureTopRightOutline', to: '/pictures' },
-  { label: 'Countries', icon: 'mdiFlagOutline', to: '/countries/countries' },
-  { label: 'Users', icon: 'mdiAccountMultipleOutline', to: '/users/users' },
-  { label: 'Jokes', icon: 'mdiAlphaJ', to: '/joke/joke' },
-  { label: 'Exchange', icon: 'mdiSwapHorizontal', to: '/exchange/exchange' },
-  { label: 'NASA', icon: 'mdiSpaceStation', to: '/nasa/nasa' },
-  { label: 'Library', icon: 'mdiLibraryOutline', to: '/library/library' },
+  { label: 'Countries', icon: 'mdiFlagOutline', to: '/countries' },
+  { label: 'Users', icon: 'mdiAccountMultipleOutline', to: '/users' },
+  { label: 'Jokes', icon: 'mdiAlphaJ', to: '/joke' },
+  { label: 'Exchange', icon: 'mdiSwapHorizontal', to: '/exchange' },
+  { label: 'NASA', icon: 'mdiSpaceStation', to: '/nasa' },
+  { label: 'Library', icon: 'mdiLibraryOutline', to: '/library' },
 ];
 
 </script>
