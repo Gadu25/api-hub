@@ -70,7 +70,6 @@
 
   const searchNews = async () => {
     event.preventDefault();
-    console.log('hit', query.value)
     isSearch.value = true;
     if (query.value.trim()) {
       await newsStore.fetchEverything(query.value);

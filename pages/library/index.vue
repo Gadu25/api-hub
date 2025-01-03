@@ -42,15 +42,12 @@ const getImage = async (book) => {
   for (const source of imageSources) {
     if (book[source]) {
       const url = await libraryStore.getBookImage(book[source][0], source);
-      console.log(`Checking URL: ${url}`);
       const isValid = await checkImageSize(url, 10 , 10);
       if (isValid) {
-        console.log(`Valid image URL found: ${url}`);
         return url;
       }
     }
   }
-  console.log(`No valid image found for book: ${book.title}`);
   return null;
 };
 
