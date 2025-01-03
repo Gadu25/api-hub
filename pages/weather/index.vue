@@ -14,6 +14,15 @@
         </button>
       </div>
 
+      <!-- Modal (Error Popup) -->
+      <transition name="modal-fade" >
+        <div v-if="showModal" class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+          <div class="bg-yellow-600 text-white p-6 rounded-lg shadow-lg max-w-xs w-full text-center">
+            <p>{{ errorMessage }}</p>
+          </div>
+        </div>
+      </transition>
+
       <!-- Card Grid -->
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         <div v-for="city in weatherStore.savedLocations" :key="city"
@@ -39,7 +48,6 @@
               <img :src="`http://openweathermap.org/img/wn/${weatherStore.weatherData[city].weather[0].icon}@2x.png`"
                 :alt="weatherStore.weatherData[city].weather[0].description" class="w-16 h-16 mx-auto"
                 :class="getWeatherAnimation(weatherStore.weatherData[city].weather[0].description)" />
-
             </div>
             <p class="text-4xl font-semibold">{{ (weatherStore.weatherData[city].main.temp - 273.15).toFixed(2) }}°C</p>
             <h1 class="text-white capitalize">{{ weatherStore.weatherData[city].weather[0].description }}</h1>
@@ -62,7 +70,7 @@
         </div>
       </div>
 
-      <!-- Error Message -->
+      <!-- Error Message (for display) -->
       <div v-if="weatherStore.error" class="mt-6 text-red-400 text-center">
         {{ weatherStore.error }}
       </div>
@@ -72,22 +80,33 @@
 </template>
 
 
-<script>
-import { ref } from 'vue';
+<script>import { ref } from 'vue';
 import { useWeatherStore } from '~/stores/useWeatherStore';
 export default {
   setup() {
     const weatherStore = useWeatherStore();
     const newCity = ref('');
+    const errorMessage = ref('');
+    const showModal = ref(false); // Control the visibility of the modal
     const addCity = () => {
-      if (newCity.value.trim()) {
+      const cityName = newCity.value.trim().toLowerCase();
+      if (cityName && !weatherStore.savedLocations.some(city => city.toLowerCase() === cityName)) {
         weatherStore.addLocation(newCity.value.trim());
         newCity.value = '';
+        errorMessage.value = ''; // Clear any previous error messages
+      } else if (cityName) {
+        errorMessage.value = `The city "${newCity.value.trim()}" already exists.`; // Set error message
+        showModal.value = true; // Show the modal
+        setTimeout(() => {
+          showModal.value = false; // Hide the modal after 5 seconds
+        }, 2000);
       }
     };
+
     const removeCity = (city) => {
       weatherStore.removeLocation(city);
     };
+
     const getWeatherAnimation = (description) => {
       switch (description.toLowerCase()) {
         case 'clear sky':
@@ -122,6 +141,7 @@ export default {
       };
       return new Date(dateString).toLocaleString('en-US', options);
     };
+
     return {
       getWeatherAnimation,
       formatDate,
@@ -129,9 +149,13 @@ export default {
       newCity,
       addCity,
       removeCity,
+      showModal, // Expose the modal visibility state
+      errorMessage, // Expose the error message
     };
   },
 };
+
+
 </script>
 <style>
 /* Sunny Animation */
@@ -242,4 +266,15 @@ export default {
 .light-snow-animation {
   animation: light-snow 2s infinite ease-in-out;
 }
+
+/* Modal Fade-in and Fade-out Animation */
+.modal-fade-enter-active, .modal-fade-leave-active {
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.modal-fade-enter, .modal-fade-leave-to /* .modal-fade-leave-active in <2.1.8 */ {
+  opacity: 0;
+  transform: translateY(50px); /* Slide from below */
+}
+
 </style>
