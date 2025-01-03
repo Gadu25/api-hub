@@ -51,38 +51,67 @@ onMounted(async () => {
   <div class="flex justify-center w-full">
     <div class="w-full mb-10">
       <div class="relative flex items-center justify-center">
-        <input type="text" id="simple-search"
-          class="bg-gray-50 border border-gray-300 text-sm rounded-full focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5"
-          placeholder="Look for something..." v-model="query" required @keypress.enter="searchCountries()" />
+        <input
+          type="text"
+          id="simple-search"
+          class="bg-white border border-gray-300 text-sm rounded-full focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 shadow-md"
+          placeholder="Look for something..."
+          v-model="query"
+          required
+          @keypress.enter="searchCountries()"
+        />
         <!-- Search Icon -->
         <div class="absolute top-1/2 left-3 transform -translate-y-1/2">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24"
-            stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M21 21l-4.35-4.35m1.35-5.65a7 7 0 11-14 0 7 7 0 0114 0z" />
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-5 w-5 text-gray-400"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M21 21l-4.35-4.35m1.35-5.65a7 7 0 11-14 0 7 7 0 0114 0z"
+            />
           </svg>
         </div>
       </div>
     </div>
   </div>
 
-
   <!-- Flag Cards Grid -->
-  <div v-if="!loading" class="grid lg:grid-cols-6 md:grid-cols-4 sm:grid-cols-2 gap-8 lg:gap-12">
+  <div
+    v-if="!loading"
+    class="grid lg:grid-cols-5 md:grid-cols-4 sm:grid-cols-2 gap-6 lg:gap-8 px-4"
+  >
     <!-- Dynamically Render Filtered Cards -->
-    <template v-if="filteredCountries" v-for="countries in filteredCountries">
-      <div class="card rounded-lg overflow-hidden shadow-md cursor-pointer bg-gray-100"
-        @click="navigateToCountry(countries)">
+    <template
+      v-if="filteredCountries"
+      v-for="countries in filteredCountries"
+    >
+      <div
+        class="card relative overflow-hidden shadow-lg cursor-pointer bg-white rounded-lg"
+        @click="navigateToCountry(countries)"
+      >
         <!-- Image at the top -->
-         <div class="rounded overflow-hidden">
-           <img :src="countries.flags.svg" :alt="countries.name.common"
-            class="w-full h-32 object-contain rounded " />
-         </div>
-       
-        <!-- Card content -->
-        <div class="p-4">
-          <h2 class="text-lg font-semibold">{{ countries.name.common }}</h2>
-          <p class="text-sm text-gray-500">{{ countries.region }}</p>
+        <div class="image-container">
+          <img
+            :src="countries.flags.svg"
+            :alt="countries.name.common"
+            class="w-full h-full object-cover"
+          />
+        </div>
+
+        <!-- Overlay with text -->
+        <div
+          class="card-overlay absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 transition-opacity duration-300"
+        >
+          <div class="text-center text-white">
+            <h2 class="text-xl font-bold">{{ countries.name.common }}</h2>
+            <p class="text-sm mt-2">{{ countries.region }}</p>
+          </div>
         </div>
       </div>
     </template>
@@ -91,31 +120,39 @@ onMounted(async () => {
 
 <style scoped>
 .card {
-  img {
-    scale: 1.2;
-    transition: all 0.3s;
-  }
-
-  &:hover {
-    animation: upDown .2s;
-
-    img {
-      scale: 1;
-    }
-  }
+  position: relative;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-@keyframes upDown {
-  0% {
-    transform: translateY(0);
-  }
+.card:hover {
+  box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.2);
+  transform: translateY(-5px);
+}
 
-  50% {
-    transform: translateY(-2px);
-  }
+.card:hover .card-overlay {
+  opacity: 1; /* Show overlay on hover */
+}
 
-  100% {
-    transform: translateY(0);
-  }
+.image-container {
+  width: 100%;
+  height: 0;
+  padding-top: 56.25%; /* Aspect ratio of 16:9 */
+  position: relative;
+  overflow: hidden;
+}
+
+.image-container img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card-overlay {
+  transition: opacity 0.3s ease;
 }
 </style>
+
+
