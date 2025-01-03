@@ -3,23 +3,48 @@
 <template>
   <div>
     <div class="flex justify-center items-center mb-10">
-      <h1 class="font-semibold text-3xl ">Let’ s find an image, What’s on your mind?</h1>
+      <h1 class="font-semibold text-3xl ">Let’s find an image, What’s on your mind?</h1>
     </div>
 
     <div>
-      <form class="flex items-center  mx-auto mb-10" @submit.prevent>
+      <form class="flex items-center mx-auto mb-10" @submit.prevent="searchPicture()">
         <label for="simple-search" class="sr-only">Search</label>
-        <div class="relative w-full">
+        <div class="relative w-full flex items-center">
+          <!-- Search Icon -->
           <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-500" fill="none" viewBox="0 0 24 24"
-              stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M21 21l-4.35-4.35m1.35-5.65a7 7 0 11-14 0 7 7 0 0114 0z" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5 text-gray-400"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M21 21l-4.35-4.35m1.35-5.65a7 7 0 11-14 0 7 7 0 0114 0z"
+              />
             </svg>
           </div>
-          <input type="text" id="simple-search"
-          class="bg-gray-50 border border-gray-300 text-sm rounded-full focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5"
-          placeholder="Look for something..." v-model="query" required @keypress.enter="searchPicture()" />
+
+          <!-- Input Field -->
+          <input
+            type="text"
+            id="simple-search"
+            class="bg-gray-100 border border-gray-300 text-sm rounded-full focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5"
+            placeholder="Look for something..."
+            v-model="query"
+            required
+          />
+
+          <!-- Submit Button -->
+          <button
+            type="submit"
+            class="ml-2 bg-blue-500 text-white text-sm font-medium rounded-full px-4 py-2 transition-all duration-300 hover:bg-blue-600 focus:ring focus:ring-blue-300"
+          >
+            Search
+          </button>
         </div>
       </form>
     </div>

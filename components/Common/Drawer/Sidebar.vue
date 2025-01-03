@@ -1,13 +1,13 @@
 <template>
   <div class="sidebar-wrapper">
     <div class="main" :class="{'close':!isDrawerOpen}">
-      <div class="self-center text-xl font-semibold whitespace-nowrap dark:text-white w-full px-2 mb-4">
+      <div class="self-center text-2xl font-bold whitespace-nowrap dark:text-white w-full px-2 mb-6">
         {{ isDrawerOpen ? 'API HUB' : 'API' }}
       </div>
       <button
         class="floating-button"
         @click="toggleDrawer">
-        <MdiIcon :icon="isDrawerOpen ? 'mdiChevronLeft' : 'mdiChevronRight'" />
+        <MdiIcon class="icon" icon="mdiChevronLeft" :class="{'close':!isDrawerOpen}"/>
       </button>
       <div class="flex flex-col gap-2">
         <CommonDrawerSidebarMenu
@@ -28,6 +28,7 @@
 const router = useRouter();
 const currentRoute = computed(() => router.currentRoute.value);
 const sidebarRoute = ref(currentRoute.value);
+import logo from '~/assets/images/api-hub-logo.jpeg'
 
 watch(
   currentRoute,
@@ -79,11 +80,34 @@ const toggleDrawer = () => {
 
 .main .floating-button {
   position: absolute;
-  top: 55px;
+  top: 60px;
   right: -10px;
   padding: 8px;
   border-radius: 100%;
   background-color: #F39C12;
-  color: #ffffff
+  color: #ffffff;
+  transition: all .2s;
+  z-index: 99;
+}
+
+.floating-button:hover {
+  scale: 1.2;
+  box-shadow: 0 0 4px #F39C12;
+}
+
+.icon {
+  transition: all .3s;
+}
+
+.floating-button:hover .icon {
+  transform: rotate(270deg) scale(1.3);
+}
+
+.icon.close {
+  transform: rotate(180deg);
+}
+
+.floating-button:active {
+  scale: .9;
 }
 </style>
