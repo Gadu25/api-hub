@@ -3,7 +3,7 @@
       <div class="flex gap-4 items-center">
         <MdiIcon v-if="props.hasMobileNav" size="40" icon="mdiMenu" class="text-slate-900 cursor-pointer mobile-burger" @click="showNav = true"/>
         <a href="#" class="items-center">
-          <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-gray-700"> {{ paramId.charAt(0).toUpperCase() + paramId.slice(1).toLowerCase() }}</span>
+          <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-gray-700">{{ paramId }}</span>
         </a>
       </div>
       <span class="date-span">2021-12-24 14:23:25</span>
@@ -27,7 +27,15 @@
 const route = useRoute();
 const paramId = computed(() => {
   const urlSegments = route.fullPath.split('/');
-  return urlSegments[urlSegments.length - 1];
+  const word = urlSegments[urlSegments.length - 1]
+  const firstLetter = word.charAt(0)
+
+  const firstLetterCap = firstLetter.toUpperCase()
+
+  const remainingLetters = word.slice(1)
+
+  const capitalizedWord = firstLetterCap + remainingLetters
+  return capitalizedWord;
 });
 const router = useRouter();
 const currentRoute = computed(() => router.currentRoute.value);
