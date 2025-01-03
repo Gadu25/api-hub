@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed } from 'vue';
 import { useUserStore } from '@/stores/useUserStore';
 
 const countries = [
@@ -26,17 +26,11 @@ const countries = [
   { code: "us", name: "United States" }
 ];
 
-// Store initialization
 const userStore = useUserStore();
-
-
-// Reactive references
 const selectedGender = ref(userStore.selectedGender || 'ALL');
 const selectedNationality = ref(userStore.selectedNationality || 'ALL');
-const results = ref(userStore.results || 10); // Default to 10 results
-const showResults = ref(false); // Controls whether to display the results
-
-
+const results = ref(userStore.results || 10);
+const showResults = ref(false);
 
 const generateUsers = async () => {
   const filter = {
@@ -44,11 +38,10 @@ const generateUsers = async () => {
     gender: selectedGender.value === 'ALL' ? '' : selectedGender.value.toLowerCase(),
     nat: selectedNationality.value === 'ALL' ? '' : selectedNationality.value.toLowerCase(),
   };
-  await userStore.fetchUser(filter); // Fetch users from the API
-  showResults.value = true; // Show results after data is fetched
+  await userStore.fetchUser(filter);
+  showResults.value = true;
 };
 
-// Filtered users based on selections
 const filteredUsers = computed(() => {
   return (
     userStore.userData.results?.filter(user => {
@@ -61,7 +54,6 @@ const filteredUsers = computed(() => {
   );
 });
 
-// Generate button enabled state
 const isGenerateButtonEnabled = computed(() => {
   return selectedGender.value !== '' && selectedNationality.value !== '';
 });
@@ -69,99 +61,68 @@ const isGenerateButtonEnabled = computed(() => {
 
 <template>
   <div>
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 p-4 rounded-md">
+    <div class="grid grid-cols-1 gap-6 p-6 rounded-md transition-all lg:grid-cols-2">
       <!-- Left Panel -->
       <div>
-        <h2 class="font-semibold text-2xl mb-6">Generate Users</h2>
+        <h2 class="text-2xl font-semibold text-gray-800 mb-6">Generate Users</h2>
+        <div class="space-y-4">
+          <!-- Gender Dropdown -->
+          <select v-model="selectedGender" class="block w-full p-2.5 border rounded-md text-gray-700">
+            <option value="ALL">All Genders</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+          </select>
 
-        <!-- Gender Dropdown -->
-        <select v-model="selectedGender" @change="userStore.saveSelections(selectedGender, selectedNationality)" class="form-select">
-          <option value="ALL">All Genders</option>
-          <option value="Male">Male</option>
-          <option value="Female">Female</option>
-        </select>
+          <!-- Nationality Dropdown -->
+          <select v-model="selectedNationality" class="block w-full p-2.5 border rounded-md text-gray-700">
+            <option value="ALL">All Nationalities</option>
+            <option v-for="country in countries" :key="country.code" :value="country.code">
+              {{ country.name }}
+            </option>
+          </select>
 
-        <!-- Nationality Dropdown -->
-        <select v-model="selectedNationality" @change="userStore.saveSelections(selectedGender, selectedNationality)" class="form-select mt-4">
-          <option value="ALL">All Nationalities</option>
-          <option v-for="country in countries" :key="country.code" :value="country.code">
-            {{ country.name }}
-          </option>
-        </select>
+          <!-- Results Input -->
+          <div>
+            <label class="block text-sm font-medium text-gray-600 mb-1">Results</label>
+            <input
+              type="number"
+              v-model.number="results"
+              min="1"
+              class="block w-full p-2.5 border rounded-md"
+            />
+          </div>
 
-        <!-- Results Input -->
-        <div class="flex-1 mt-4">
-          <label class="block text-sm font-medium text-gray-700">Results</label>
-          <input
-            type="number"
-            v-model.number="results"
-            min="1"
-            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-          />
+          <!-- Generate Button -->
+          <button
+            :disabled="!isGenerateButtonEnabled"
+            @click="generateUsers"
+            class="w-full py-2.5 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600 disabled:bg-blue-300 disabled:cursor-not-allowed transition-all"
+          >
+            Generate
+          </button>
         </div>
-
-        <!-- Generate Button -->
-        <button
-          :disabled="!isGenerateButtonEnabled"
-          @click="generateUsers"
-          class="btn mt-6"
-        >
-          Generate
-        </button>
       </div>
 
       <!-- Right Panel -->
-      <div>
-        <div v-if="userStore.loading">Loading...</div>
+      <div v-if="showResults" class="transition-all flex flex-wrap gap-4 max-h-[80vh] overflow-auto rounded-2xl">
+        <div v-if="userStore.loading" class="text-center text-blue-600">Loading...</div>
         <div v-else-if="userStore.error" class="text-red-500">{{ userStore.error }}</div>
-        <div v-else-if="showResults">
-          <ul class="grid grid-cols-1 xl:grid-cols-2 gap-2 xl:gap-4">
-            <li
-              v-for="(user, index) in filteredUsers"
-              :key="index"
-              class="p-4 border border-gray-200 rounded-md"
-            >
-              <div class="flex items-center space-x-4">
-                <img
-                  :src="user.picture.thumbnail"
-                  alt="User thumbnail"
-                  class="w-16 h-16 rounded-full"
-                />
-                <div>
-                  <h2 class="text-lg font-medium text-gray-800">
-                    {{ user.name.first }} {{ user.name.last }}
-                  </h2>
-                  <p class="text-sm text-gray-500">{{ user.email }}</p>
-                </div>
-              </div>
-            </li>
-          </ul>
+        <div v-for="(user, index) in filteredUsers" :key="index" class="flex items-center p-4 border rounded-md shadow-md hover:shadow-lg bg-white w-full sm:w-[calc(50%-8px)]">
+          <img
+            :src="user.picture.thumbnail"
+            alt="User thumbnail"
+            class="w-16 h-16 rounded-full"
+          />
+          <div class="ml-4 flex-1 overflow-hidden">
+            <h2 class="text-lg font-medium text-gray-800 truncate">
+              {{ user.name.first }} {{ user.name.last }}
+            </h2>
+            <p class="text-sm text-gray-500 break-words">
+              {{ user.email }}
+            </p>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </template>
-
-<style scoped>
-.form-select {
-  width: 100%;
-  padding: 8px;
-  margin-bottom: 16px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-.btn {
-  padding: 10px 20px;
-  background-color: #4caf50;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.btn:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
-}
-</style>
