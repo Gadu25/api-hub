@@ -14,55 +14,71 @@
         </button>
       </div>
 
+      <!-- Modal (Error Popup) -->
+      <transition name="modal-fade">
+        <div v-if="showModal" class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+          <div class="bg-yellow-600 text-white p-6 rounded-lg shadow-lg max-w-xs w-full text-center">
+            <p>{{ errorMessage }}</p>
+          </div>
+        </div>
+      </transition>
+
       <!-- Card Grid -->
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         <div v-for="city in weatherStore.savedLocations" :key="city"
-          class="bg-gradient-to-b from-blue-500 to-blue-400 w-full rounded-xl shadow-xl p-6 relative">
+          class="bg-gradient-to-b from-blue-500 to-blue-400 w-full rounded-xl shadow-xl p-6 relative" :style="{
+            backgroundImage: `url(${getWeatherBackground(weatherStore.weatherData[city].weather[0].description)})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat'
+          }">
           <button @click="removeCity(city)"
-            class="absolute top-2 right-2 bg-slate-100 text-red-300 rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-700">
+            class="absolute top-2 right-2  text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-700">
             ✕
           </button>
           <!-- Location and Date -->
-          <div class="text-white mt-5">
-            <div class="text-sm bg-white/20 px-2 py-1 rounded-lg">
-              <!-- Date -->
-              <p>{{ formatDate(weatherStore.forecastData[city].list[0].dt_txt) }}</p>
+          <nuxt-link :to="`weather/${city}`">
+            <div class="text-white mt-5">
+              <div class="text-sm bg-white/20 px-2 py-1 rounded-lg">
+                <!-- Date -->
+                <p>{{ formatDate(weatherStore.forecastData[city].list[0].dt_txt) }}</p>
+              </div>
+              <div class="flex items-center space-x-2 justify-center">
+                <p class="font-medium">{{ city }}</p>
+              </div>
             </div>
-            <div class="flex items-center space-x-2 justify-center">
-              <p class="font-medium">{{ city }}</p>
+            <!-- Weather Icon and Temperature -->
+            <div class="text-center mt-4">
+              <div class="w-15 h-15 mx-auto mb-2">
+                <!-- Replace with an actual icon -->
+                <img :src="`http://openweathermap.org/img/wn/${weatherStore.weatherData[city].weather[0].icon}@2x.png`"
+                  :alt="weatherStore.weatherData[city].weather[0].description" class="w-16 h-16 mx-auto"
+                  :class="getWeatherAnimation(weatherStore.weatherData[city].weather[0].description)" />
+              </div>
+              <p class="text-4xl font-semibold">{{ (weatherStore.weatherData[city].main.temp - 273.15).toFixed(2) }}°C
+              </p>
+              <h1 class="text-white capitalize">{{ weatherStore.weatherData[city].weather[0].description }}</h1>
             </div>
-          </div>
-          <!-- Weather Icon and Temperature -->
-          <div class="text-center mt-4">
-            <div class="w-15 h-15 mx-auto mb-2">
-              <!-- Replace with an actual icon -->
-              <img :src="`http://openweathermap.org/img/wn/${weatherStore.weatherData[city].weather[0].icon}@2x.png`"
-                :alt="weatherStore.weatherData[city].weather[0].description" class="w-16 h-16 mx-auto"
-                :class="getWeatherAnimation(weatherStore.weatherData[city].weather[0].description)" />
-
+            <!-- Additional Weather Info -->
+            <div class="flex justify-between text-white text-sm mt-4">
+              <div class="flex items-center space-x-1">
+                <span>💨</span>
+                <p>Wind: {{ weatherStore.weatherData[city].wind.speed }} m/s</p>
+              </div>
+              <div class="flex items-center space-x-1">
+                <p>Min: {{ (weatherStore.weatherData[city].main.temp_min - 273.15).toFixed(2) }}°C | Max: {{
+                  (weatherStore.weatherData[city].main.temp_max - 273.15).toFixed(2) }}°C</p>
+              </div>
+              <div class="flex items-center space-x-1">
+                <span>💧</span>
+                <p>Hum: {{ weatherStore.weatherData[city].main.humidity }}%</p>
+              </div>
             </div>
-            <p class="text-4xl font-semibold">{{ (weatherStore.weatherData[city].main.temp - 273.15).toFixed(2) }}°C</p>
-            <h1 class="text-white capitalize">{{ weatherStore.weatherData[city].weather[0].description }}</h1>
-          </div>
-          <!-- Additional Weather Info -->
-          <div class="flex justify-between text-white text-sm mt-4">
-            <div class="flex items-center space-x-1">
-              <span>💨</span>
-              <p>Wind: {{ weatherStore.weatherData[city].wind.speed }} m/s</p>
-            </div>
-            <div class="flex items-center space-x-1">
-              <p>Min: {{ (weatherStore.weatherData[city].main.temp_min - 273.15).toFixed(2) }}°C | Max: {{
-                (weatherStore.weatherData[city].main.temp_max - 273.15).toFixed(2) }}°C</p>
-            </div>
-            <div class="flex items-center space-x-1">
-              <span>💧</span>
-              <p>Hum: {{ weatherStore.weatherData[city].main.humidity }}%</p>
-            </div>
-          </div>
+          </nuxt-link>
         </div>
       </div>
 
-      <!-- Error Message -->
+      <!-- Error Message (for display) -->
       <div v-if="weatherStore.error" class="mt-6 text-red-400 text-center">
         {{ weatherStore.error }}
       </div>
@@ -72,22 +88,49 @@
 </template>
 
 
-<script>
-import { ref } from 'vue';
+<script>import { ref } from 'vue';
 import { useWeatherStore } from '~/stores/useWeatherStore';
 export default {
   setup() {
     const weatherStore = useWeatherStore();
     const newCity = ref('');
+    const errorMessage = ref('');
+    const showModal = ref(false); // Control the visibility of the modal
     const addCity = () => {
-      if (newCity.value.trim()) {
+      const cityName = newCity.value.trim().toLowerCase();
+      if (cityName && !weatherStore.savedLocations.some(city => city.toLowerCase() === cityName)) {
         weatherStore.addLocation(newCity.value.trim());
         newCity.value = '';
+        errorMessage.value = ''; // Clear any previous error messages
+      } else if (cityName) {
+        errorMessage.value = `The city "${newCity.value.trim()}" already exists.`; // Set error message
+        showModal.value = true; // Show the modal
+        setTimeout(() => {
+          showModal.value = false; // Hide the modal after 5 seconds
+        }, 2000);
       }
     };
+
     const removeCity = (city) => {
       weatherStore.removeLocation(city);
     };
+    const getWeatherBackground = (description) => {
+      const weatherImages = {
+        'clear sky': '/clear.gif',
+        'overcast clouds': 'https://images.unsplash.com/photo-1442213391790-7656f6e368b9?crop=entropy&cs=srgb&fm=jpg&ixid=M3w2ODUxNzB8MHwxfHNlYXJjaHw3fHxvdmVyY2FzdCUyMGNsb3Vkc3xlbnwwfHx8fDE3MzU4ODY1Nzl8MA&ixlib=rb-4.0.3&q=85',
+        'scattered clouds': '/scatter.gif',
+        'broken clouds': '/broken.gif',
+        'light rain': '/rain.gif',
+        'moderate rain': 'https://source.unsplash.com/1600x900/?rainy',
+        'thunderstorm': '/thunderstorm.gif',
+        'snow': 'https://source.unsplash.com/1600x900/?snow',
+        'mist': 'https://source.unsplash.com/1600x900/?mist',
+        // Add more mappings as needed
+      };
+
+      return weatherImages[description.toLowerCase()] || 'https://source.unsplash.com/1600x900/?weather';
+    };
+
     const getWeatherAnimation = (description) => {
       switch (description.toLowerCase()) {
         case 'clear sky':
@@ -122,16 +165,22 @@ export default {
       };
       return new Date(dateString).toLocaleString('en-US', options);
     };
+
     return {
+      getWeatherBackground,
       getWeatherAnimation,
       formatDate,
       weatherStore,
       newCity,
       addCity,
       removeCity,
+      showModal, // Expose the modal visibility state
+      errorMessage, // Expose the error message
     };
   },
 };
+
+
 </script>
 <style>
 /* Sunny Animation */
@@ -241,5 +290,21 @@ export default {
 
 .light-snow-animation {
   animation: light-snow 2s infinite ease-in-out;
+}
+
+/* Modal Fade-in and Fade-out Animation */
+.modal-fade-enter-active,
+.modal-fade-leave-active {
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.modal-fade-enter,
+.modal-fade-leave-to
+
+/* .modal-fade-leave-active in <2.1.8 */
+  {
+  opacity: 0;
+  transform: translateY(50px);
+  /* Slide from below */
 }
 </style>

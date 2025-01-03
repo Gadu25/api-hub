@@ -17,7 +17,6 @@ const searchCountries = async () => {
   if (query.value.trim()) {
     await countryStore.fetchCountries();
     isSearch.value = true;
-    console.log("country", countriesData.value);
   } else {
     alert('Please enter a query before fetching picture.');
   }
@@ -41,8 +40,6 @@ const navigateToCountry = (country: { cca3: string; }) => {
 onMounted(async () => {
   await countryStore.fetchCountries();
   // Initially, navigate to the first country after fetching countries
-
-  console.log("Countries loaded on mount:", countriesData.value);
 });
 </script>
 
@@ -84,7 +81,7 @@ onMounted(async () => {
   <!-- Flag Cards Grid -->
   <div
     v-if="!loading"
-    class="grid lg:grid-cols-5 md:grid-cols-4 sm:grid-cols-2 gap-6 lg:gap-8 px-4"
+    class="grid xl:grid-cols-4 lg:grid-cols-2 grid-cols-1 gap-4"
   >
     <!-- Dynamically Render Filtered Cards -->
     <template
@@ -92,7 +89,7 @@ onMounted(async () => {
       v-for="countries in filteredCountries"
     >
       <div
-        class="card relative overflow-hidden shadow-lg cursor-pointer bg-white rounded-lg"
+        class="card relative overflow-hidden shadow-lg cursor-pointer bg-white rounded-xl transition-all duration-300 hover:scale-105 border"
         @click="navigateToCountry(countries)"
       >
         <!-- Image at the top -->
@@ -100,7 +97,7 @@ onMounted(async () => {
           <img
             :src="countries.flags.svg"
             :alt="countries.name.common"
-            class="w-full h-full object-cover"
+            class="w-full h-full object-contain rounded-lg"
           />
         </div>
 
@@ -139,6 +136,7 @@ onMounted(async () => {
   padding-top: 56.25%; /* Aspect ratio of 16:9 */
   position: relative;
   overflow: hidden;
+  background-color: #F3F4F6;
 }
 
 .image-container img {
@@ -147,12 +145,22 @@ onMounted(async () => {
   left: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain; /* Use contain for irregular shapes */
 }
 
 .card-overlay {
   transition: opacity 0.3s ease;
 }
-</style>
 
+/* Responsive design adjustments */
+@media (max-width: 768px) {
+  .card {
+    margin-bottom: 12px;
+  }
+
+  .image-container {
+    padding-top: 66.66%; /* Adjust for different aspect ratio on smaller screens */
+  }
+}
+</style>
 

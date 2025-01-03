@@ -12,7 +12,7 @@
       <div v-else>
         <p class="text-gray-500">Loading location data...</p>
       </div>
-
+      <h1 class="text-xl font-extrabold">{{weatherStore.weatherData[id]?.name}}</h1>
       <div class="mt-4 flex justify-between items-center bg-gray-100 p-4 rounded-lg overflow-x-auto">
         <div class="flex flex-col items-center">
           <span>Now</span>
@@ -77,8 +77,12 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
+import { useWeatherStore } from '~/stores/useWeatherStore';
+
+const weatherStore = useWeatherStore();
 
 const route = useRoute();
+const id = ref(route.params.id)
 const currentLocation = ref<{ id: string; location: string; temperature: number; condition: string } | null>(null);
 const otherLocations = ref<{ id: string; location: string; temperature: number; condition: string }[]>([]);
 
