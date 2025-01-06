@@ -9,5 +9,13 @@ export default defineNuxtConfig({
       autoprefixer: {},
     },
   },
+  app: {
+    head: {
+      title: 'API Hub',
+      link: [
+        { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+      ],
+    },
+  },
   modules: ['@nuxtjs/tailwindcss', 'nuxt-mdi'],
 })
