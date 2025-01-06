@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { getPictureOfTheDay } from '~/api/nasa';
 
-export const useNasaStore = defineStore('exchangeRate', {
+export const useNasaStore = defineStore('nasa', {
     state: () => ({
         pictureOfTheDay: {},
         loading: false,
