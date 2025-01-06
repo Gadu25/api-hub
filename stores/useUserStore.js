@@ -39,4 +39,8 @@ export const useUserStore = defineStore('user', {
       return this.userData;
     },
   },
+  persist: {
+    key: 'saved-users',
+    paths: ['userData', 'results']
+  }
 });

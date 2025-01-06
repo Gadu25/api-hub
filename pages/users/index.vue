@@ -104,10 +104,8 @@ const isGenerateButtonEnabled = computed(() => {
       </div>
 
       <!-- Right Panel -->
-      <div v-if="showResults" class="transition-all flex flex-wrap gap-4 max-h-[80vh] overflow-auto rounded-2xl">
-        <div v-if="userStore.loading" class="text-center text-blue-600">Loading...</div>
-        <div v-else-if="userStore.error" class="text-red-500">{{ userStore.error }}</div>
-        <div v-for="(user, index) in filteredUsers" :key="index" class="flex items-center p-4 border rounded-md shadow-md hover:shadow-lg bg-white w-full sm:w-[calc(50%-8px)]">
+      <div v-if="results > 0" class="transition-all flex flex-wrap gap-4 max-h-[80vh] overflow-auto rounded-2xl">
+        <nuxt-link :to="`users/${index}`" v-for="(user, index) in filteredUsers" :key="index" class="flex items-center p-4 border rounded-md shadow-md hover:shadow-lg bg-white w-full sm:w-[calc(50%-8px)]">
           <img
             :src="user.picture.thumbnail"
             alt="User thumbnail"
@@ -121,8 +119,9 @@ const isGenerateButtonEnabled = computed(() => {
               {{ user.email }}
             </p>
           </div>
-        </div>
+        </nuxt-link>
       </div>
+      <div v-if="userStore.loading" class="text-center text-blue-600">Loading...</div>
     </div>
   </div>
 </template>
