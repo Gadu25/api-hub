@@ -61,7 +61,7 @@ const isGenerateButtonEnabled = computed(() => {
 
 <template>
   <div>
-    <div class="grid grid-cols-1 gap-6 p-6 rounded-md transition-all lg:grid-cols-2">
+    <div class="grid grid-cols-1 gap-6 p-6 transition-all lg:grid-cols-2">
       <!-- Left Panel -->
       <div>
         <h2 class="text-2xl font-semibold text-gray-800 mb-6">Generate Users</h2>
@@ -104,10 +104,8 @@ const isGenerateButtonEnabled = computed(() => {
       </div>
 
       <!-- Right Panel -->
-      <div v-if="showResults" class="transition-all flex flex-wrap gap-4 max-h-[80vh] overflow-auto rounded-2xl">
-        <div v-if="userStore.loading" class="text-center text-blue-600">Loading...</div>
-        <div v-else-if="userStore.error" class="text-red-500">{{ userStore.error }}</div>
-        <div v-for="(user, index) in filteredUsers" :key="index" class="flex items-center p-4 border rounded-md shadow-md hover:shadow-lg bg-white w-full sm:w-[calc(50%-8px)]">
+      <div v-if="results > 0" class="transition-all flex flex-wrap gap-4 max-h-[80vh] overflow-auto">
+        <nuxt-link :to="`users/${index}`" v-for="(user, index) in filteredUsers" :key="index" class="flex items-center p-4 border rounded-md shadow-md hover:shadow-lg bg-white w-full sm:w-[calc(50%-8px)]">
           <img
             :src="user.picture.thumbnail"
             alt="User thumbnail"
@@ -121,8 +119,9 @@ const isGenerateButtonEnabled = computed(() => {
               {{ user.email }}
             </p>
           </div>
-        </div>
+        </nuxt-link>
       </div>
+      <div v-if="userStore.loading" class="text-center text-blue-600">Loading...</div>
     </div>
   </div>
 </template>
