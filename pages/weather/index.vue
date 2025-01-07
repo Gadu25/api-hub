@@ -88,7 +88,8 @@
 </template>
 
 
-<script>import { ref } from 'vue';
+<script>
+import { ref } from 'vue';
 import { useWeatherStore } from '~/stores/useWeatherStore';
 export default {
   setup() {
