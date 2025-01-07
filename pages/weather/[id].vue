@@ -48,19 +48,18 @@
               class="w-32 h-32 mx-auto" />
             <h1 class="text-white font-bold text-3xl">{{ weather.weather[0].description.toUpperCase() }}</h1>
           </div>
-          <div class="flex mt-4 justify-between">
-            <div class="bg-gray-700 px-4 py-2 rounded-md">Sunrise <br>
-
-              {{ new Date(weather.sys.sunrise * 1000).toLocaleTimeString('en-US', {
-                hour: '2-digit', minute: '2-digit'
-              }) }}
+          <div class="flex flex-col md:flex-row mt-4 justify-between md:space-x-4 space-y-4 md:space-y-0">
+            <div class="bg-gray-700 px-4 py-2 rounded-md md:w-1/3 w-full">
+              Sunrise <br>
+              {{ new Date(weather.sys.sunrise * 1000).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) }}
             </div>
-            <div class="bg-gray-700 px-4 py-2 rounded-md">Sunset
+            <div class="bg-gray-700 px-4 py-2 rounded-md md:w-1/3 w-full">
+              Sunset
               <br>
-              {{ new Date(weather.sys.sunset * 1000).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
-              }}
+              {{ new Date(weather.sys.sunset * 1000).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) }}
             </div>
-            <div class="bg-gray-700 px-4 py-2 rounded-md">Timezone <br>
+            <div class="bg-gray-700 px-4 py-2 rounded-md md:w-1/3 w-full">
+              Timezone <br>
               <span>{{ new Date().getTimezoneOffset() * 60 }}</span>
             </div>
           
