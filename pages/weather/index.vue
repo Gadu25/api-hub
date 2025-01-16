@@ -24,7 +24,7 @@
       </transition>
 
       <!-- Card Grid -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         <div v-for="city in weatherStore.savedLocations" :key="city"
           class="bg-gradient-to-b from-blue-500 to-blue-400 w-full rounded-xl shadow-xl p-6 relative" :style="{
             backgroundImage: `url(${getWeatherBackground(weatherStore.weatherData[city].weather[0].description)})`,
@@ -77,12 +77,6 @@
           </nuxt-link>
         </div>
       </div>
-
-      <!-- Error Message (for display) -->
-      <div v-if="weatherStore.error" class="mt-6 text-red-400 text-center">
-        {{ weatherStore.error }}
-      </div>
-
     </main>
   </div>
 </template>
